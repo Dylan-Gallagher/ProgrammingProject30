@@ -1,4 +1,5 @@
 //C. McCooey - Copied Widget class from week 6 project - 3pm 15/03/23
+final int EVENT_NULL = -1;
 class Widget {
   int x, y, width, height;
   String label; int event;
