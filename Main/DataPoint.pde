@@ -18,7 +18,7 @@ class DataPoint {
   int cancelled;
   int diverted;
   int distance;
-  
+
   //C.McCooey - Wrote initial version of DataPoint constructor - 9am 16/03/23
   DataPoint(TableRow row) {
     cancelled = row.getInt("CANCELLED");
@@ -36,6 +36,8 @@ class DataPoint {
     //Convert these to date format within constructor?
 
     flightDate = row.getString("FL_DATE");
+    flightDate = flightDate.split(" ")[0]; //C. McCooey - Fixed date to not include redundant hours/minutes - 4pm 16/03/23
+    
     marketingCarrier = row.getString("MKT_CARRIER");
     marketingCarrierFlightNum = row.getInt("MKT_CARRIER_FL_NUM");
 
@@ -57,4 +59,6 @@ class DataPoint {
 
     distance = row.getInt("DISTANCE");
   }
+  
+  
 }
