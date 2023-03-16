@@ -1,3 +1,4 @@
+int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
 
@@ -21,5 +22,5 @@ void setup()
 
 void draw()
 {
-  
+  // Your draw() implementation goes here
 }
