@@ -13,7 +13,10 @@ void setup()
   }
   println("Loaded " + dps.size() + " flights!");
   
-  //TODO: Demonstrate loading data from objects in ArrayList
+  //C.McCooey - Added loop to demonstrate reading from DataPoint ArrayList - 10am 16/03/23
+  for(DataPoint dp : dps){
+    println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
+  }
 }
 
 void draw()
