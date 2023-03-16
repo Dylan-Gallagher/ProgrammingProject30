@@ -18,7 +18,7 @@ class DataPoint {
   int cancelled;
   int diverted;
   int distance;
-  
+
   //C.McCooey - Wrote initial version of DataPoint constructor - 9am 16/03/23
   DataPoint(TableRow row) {
     cancelled = row.getInt("CANCELLED");
@@ -57,4 +57,6 @@ class DataPoint {
 
     distance = row.getInt("DISTANCE");
   }
+  
+  
 }
