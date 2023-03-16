@@ -1,10 +1,18 @@
+final int SCREENX = 1920/2;
+final int SCREENY = 1080/2;
+
 int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
+List currentList;
+
+void settings(){
+  size(SCREENX, SCREENY);
+}
 
 void setup()
 {
-  currentPage = 0;
+  currentPage = 1;
 
 
   // C. McCooey - Added code to load csv file and create Datapoint objects from each row - 10am 16/03/23
@@ -40,6 +48,8 @@ void draw()
   } else if (currentPage == 1)    // Data Display Screen
   {
     // code for data display screen (e.g. Graphs, data, etc)
+    currentList = new List(dps);
+    currentList.draw();
   }
 
 }
