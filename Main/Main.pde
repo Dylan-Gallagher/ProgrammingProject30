@@ -25,6 +25,8 @@ void setup()
 
 void draw()
 {
+
+  // D.Gallagher - Added code for multiple screens, 11am 16/03/23
   if (currentPage == 0)         // Main Screen
   {
      // code for main screen (query data, etc) 
