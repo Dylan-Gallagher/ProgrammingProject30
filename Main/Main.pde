@@ -16,6 +16,11 @@ void setup()
     dps.add(new DataPoint(row));
   }
   println("Loaded " + dps.size() + " flights!");
+  
+  //C.McCooey - Added loop to demonstrate reading from DataPoint ArrayList - 10am 16/03/23
+  for(DataPoint dp : dps){
+    println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
+  }
 }
 
 void draw()
