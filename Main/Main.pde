@@ -4,6 +4,9 @@ ArrayList<DataPoint> dps;
 
 void setup()
 {
+  currentPage = 0;
+  
+  
   // C. McCooey - Added code to load csv file and create Datapoint objects from each row - 10am 16/03/23
   dps = new ArrayList<DataPoint>();
   // Load data from csv into DataPoint objects
@@ -17,5 +20,12 @@ void setup()
 
 void draw()
 {
-  // Your draw() implementation goes here
+  if (currentPage == 0)         // Main Screen
+  {
+     // code for main screen (query data, etc) 
+  }
+  else if (currentPage == 1)    // Data Display Screen
+  {
+      // code for data display screen (e.g. Graphs, data, etc)
+  }
 }
