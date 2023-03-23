@@ -34,6 +34,7 @@ void setup()
   // Load data from csv into DataPoint objects
   println("Loading data...");
 
+  // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
   table = loadTable("flights2k.csv", "header");
 
   for (TableRow row : table.rows()) {
