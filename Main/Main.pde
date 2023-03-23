@@ -1,6 +1,7 @@
 final int SCREENX = 1920/2;
 final int SCREENY = 1080/2;
 
+import java.util.*;
 int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
@@ -12,9 +13,7 @@ void settings(){
 
 void setup()
 {
-
   currentPage = 1;
-
 
   // C. McCooey - Added code to load csv file and create Datapoint objects from each row - 10am 16/03/23
   dps = new ArrayList<DataPoint>();
