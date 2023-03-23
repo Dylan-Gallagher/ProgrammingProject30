@@ -11,10 +11,10 @@ Original file is located at
 # Code breaks for 100k and flights_full due to one row having time of "5" which
 #   is meant to represent 00:05
 
-
 import pandas as pd
 
 files = ["flights2k.csv", "flights10k.csv"]
+
 
 def add_delay_column(df):
   print(df.head())
@@ -22,6 +22,7 @@ def add_delay_column(df):
   df['time_delayed'] = pd.to_datetime(df['DEP_TIME'], format='%H%M', errors='coerce') - pd.to_datetime(df['CRS_DEP_TIME'], format='%H%M')
   df['time_delayed'] = df['time_delayed'].dt.total_seconds().div(60).astype(float)
   return df
+
 
 for file in files:
   print(file)
