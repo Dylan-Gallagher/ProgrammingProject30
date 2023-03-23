@@ -1,11 +1,15 @@
+import de.bezier.data.sql.*; //C. McCooey - Imported library to add SQLite integration - 2pm 23/03/23
+
 final int SCREENX = 1920/2;
 final int SCREENY = 1080/2;
 
-import java.util.*;
 int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
 List currentList;
+
+SQLite db;
+String currentQuery = "SELECT * FROM flights";
 
 void settings(){
   size(SCREENX, SCREENY);
@@ -13,7 +17,17 @@ void settings(){
 
 void setup()
 {
+  
   currentPage = 1;
+  
+  db = new SQLite(this, "SQLflights2k.db");
+  if(db.connect()){
+    db.query(currentQuery);
+    while(db.next()){
+      println(db.getString("ORIGIN") + " " + db.getString("ORIGIN_CITY_NAME"));
+    }
+  }
+
 
   // C. McCooey - Added code to load csv file and create Datapoint objects from each row - 10am 16/03/23
   dps = new ArrayList<DataPoint>();
@@ -26,21 +40,21 @@ void setup()
     dps.add(new DataPoint(row));
   }
   // C.McCooey - Added loop to demonstrate reading from DataPoint ArrayList - 10am 16/03/23
-  for(DataPoint dp : dps){
-    if(dp.intArrivalTime == -1){ //C. McCooey - Added conditional to provide different output for cancelled flights - 5pm 16/03/23
-          println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity +" WAC " + dp.originWAC + " at " + dp.intExpectedDepartureTime + " to " + dp.destinationAirport + ", " + dp.destinationCity + " WAC " + dp.destinationWAC + " at " + dp.intExpectedArrivalTime + ", a distance of " + dp.distance + " miles, was cancelled");
-    }
-    else{
-          println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity +" WAC " + dp.originWAC + " at " + dp.intExpectedDepartureTime + " (" + dp.intDepartureTime + ")" + " to " + dp.destinationAirport + ", " + dp.destinationCity + " WAC " + dp.destinationWAC + " at " + dp.intExpectedArrivalTime + " (" + dp.intArrivalTime + "), a distance of " + dp.distance + " miles");
-    }
-  }
+  //for(DataPoint dp : dps){
+  //  if(dp.intArrivalTime == -1){ //C. McCooey - Added conditional to provide different output for cancelled flights - 5pm 16/03/23
+  //        println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity +" WAC " + dp.originWAC + " at " + dp.intExpectedDepartureTime + " to " + dp.destinationAirport + ", " + dp.destinationCity + " WAC " + dp.destinationWAC + " at " + dp.intExpectedArrivalTime + ", a distance of " + dp.distance + " miles, was cancelled");
+  //  }
+  //  else{
+  //        println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity +" WAC " + dp.originWAC + " at " + dp.intExpectedDepartureTime + " (" + dp.intDepartureTime + ")" + " to " + dp.destinationAirport + ", " + dp.destinationCity + " WAC " + dp.destinationWAC + " at " + dp.intExpectedArrivalTime + " (" + dp.intArrivalTime + "), a distance of " + dp.distance + " miles");
+  //  }
+  //}
   
   println("Loaded " + dps.size() + " flights!");
 
   // C.McCooey - Added loop to demonstrate reading from DataPoint ArrayList - 10am 16/03/23
-  for(DataPoint dp : dps){
-    println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
-  }
+  //for(DataPoint dp : dps){
+  //  println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
+  //}
   
   // D.Gallagher - Added Subset class to filter by airport - 12pm 16/03/23
 
