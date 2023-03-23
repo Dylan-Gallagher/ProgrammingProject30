@@ -9,7 +9,7 @@ ArrayList<DataPoint> dps;
 List currentList;
 
 SQLite db;
-String currentQuery = "SELECT * FROM flights";
+String currentQuery = "SELECT * FROM flights ORDER BY FL_DATE";
 
 void settings(){
   size(SCREENX, SCREENY);
@@ -20,11 +20,11 @@ void setup()
   
   currentPage = 1;
   
-  db = new SQLite(this, "SQLflights2k.db");
+  db = new SQLite(this, "SQLflights2k.db"); //C.McCooey - Added code to process SQL queries and print result to console - 3pm 23/03/23
   if(db.connect()){
     db.query(currentQuery);
     while(db.next()){
-      println(db.getString("ORIGIN") + " " + db.getString("ORIGIN_CITY_NAME"));
+      println(db.getString("FL_DATE") + ": " + db.getString("MKT_CARRIER") + db.getString("MKT_CARRIER_FL_NUM") + " from " + db.getString("ORIGIN") + ", " + db.getString("ORIGIN_CITY_NAME") + " at "+ db.getInt("CRS_DEP_TIME") + " (" + db.getInt("DEP_TIME") + ") to " + db.getString("DEST") + ", " + db.getString("DEST_CITY_NAME") + " at " + db.getInt("CRS_ARR_TIME") + " (" + db.getInt("ARR_TIME") + "), a distance of " + db.getInt("DISTANCE") + " miles.");
     }
   }
 
