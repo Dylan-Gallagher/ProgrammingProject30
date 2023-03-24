@@ -1,10 +1,13 @@
-final int SCREENX = 1920/2;
-final int SCREENY = 1080/2;
+final int SCREENX = 1920-100;
+final int SCREENY = 1080-100;
 
+import java.util.*;
 int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
 List currentList;
+BarChart flightBarChart;
+
 
 void settings(){
   size(SCREENX, SCREENY);
@@ -14,15 +17,26 @@ void setup()
 {
   currentPage = 1;
 
-
   // C. McCooey - Added code to load csv file and create Datapoint objects from each row - 10am 16/03/23
   dps = new ArrayList<DataPoint>();
   // Load data from csv into DataPoint objects
   println("Loading data...");
-  table = loadTable("flights10k.csv", "header");
+
+  table = loadTable("flights2k.csv", "header");
+
   for (TableRow row : table.rows()) {
     dps.add(new DataPoint(row));
   }
+  // C.McCooey - Added loop to demonstrate reading from DataPoint ArrayList - 10am 16/03/23
+  for(DataPoint dp : dps){
+    if(dp.intArrivalTime == -1){ //C. McCooey - Added conditional to provide different output for cancelled flights - 5pm 16/03/23
+          println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity +" WAC " + dp.originWAC + " at " + dp.intExpectedDepartureTime + " to " + dp.destinationAirport + ", " + dp.destinationCity + " WAC " + dp.destinationWAC + " at " + dp.intExpectedArrivalTime + ", a distance of " + dp.distance + " miles, was cancelled");
+    }
+    else{
+          println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity +" WAC " + dp.originWAC + " at " + dp.intExpectedDepartureTime + " (" + dp.intDepartureTime + ")" + " to " + dp.destinationAirport + ", " + dp.destinationCity + " WAC " + dp.destinationWAC + " at " + dp.intExpectedArrivalTime + " (" + dp.intArrivalTime + "), a distance of " + dp.distance + " miles");
+    }
+  }
+  
   println("Loaded " + dps.size() + " flights!");
 
   // C.McCooey - Added loop to demonstrate reading from DataPoint ArrayList - 10am 16/03/23
@@ -31,12 +45,15 @@ void setup()
   }
   
   // D.Gallagher - Added Subset class to filter by airport - 12pm 16/03/23
-  Subset subset = new Subset(dps);
-  subset.filterOriginAirport("DEN");
-  for (DataPoint dp : subset.data)
-  {
-    println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
-  }
+
+  //Subset subset = new Subset(dps);
+  //subset.filterOriginAirport("DEN");
+  //for (DataPoint dp : subset.data)
+  //{
+  //  println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
+  //}
+  FlightsPerAirport flights = new FlightsPerAirport(dps);
+  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
 }
 
 void draw()
@@ -48,8 +65,9 @@ void draw()
   } else if (currentPage == 1)    // Data Display Screen
   {
     // code for data display screen (e.g. Graphs, data, etc)
-    currentList = new List(dps);
-    currentList.draw();
-  }
 
+    //currentList = new List(dps);
+    //currentList.draw();
+    flightBarChart.draw();
+  }
 }
