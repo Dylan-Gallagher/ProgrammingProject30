@@ -22,6 +22,10 @@ void setup()
   // Load data from csv into DataPoint objects
   println("Loading data...");
 
+
+
+  // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
+
   table = loadTable("flights2k.csv", "header");
 
   for (TableRow row : table.rows()) {
@@ -52,8 +56,10 @@ void setup()
   //{
   //  println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
   //}
+
   FlightsPerAirport flights = new FlightsPerAirport(dps);
   flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
+
 }
 
 void draw()
@@ -65,6 +71,7 @@ void draw()
   } else if (currentPage == 1)    // Data Display Screen
   {
     // code for data display screen (e.g. Graphs, data, etc)
+
 
     //currentList = new List(dps);
     //currentList.draw();
