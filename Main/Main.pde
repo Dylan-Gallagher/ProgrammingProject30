@@ -1,12 +1,14 @@
 import de.bezier.data.sql.*; //C. McCooey - Imported library to add SQLite integration - 2pm 23/03/23
 
-final int SCREENX = 1920/2;
-final int SCREENY = 1080/2;
+final int SCREENX = 1920-100;
+final int SCREENY = 1080-100;
 
 int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
 List currentList;
+BarChart flightBarChart;
+
 
 SQLite db;
 String currentQuery = "SELECT * FROM flights ORDER BY FL_DATE";
@@ -34,7 +36,10 @@ void setup()
   // Load data from csv into DataPoint objects
   println("Loading data...");
 
+
+
   // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
+
   table = loadTable("flights2k.csv", "header");
 
   for (TableRow row : table.rows()) {
@@ -66,6 +71,9 @@ void setup()
   //  println(dp.flightDate + ": " + dp.marketingCarrier + dp.marketingCarrierFlightNum + " from " + dp.originAirport + ", " + dp.originCity + " to " + dp.destinationAirport + ", " + dp.destinationCity);
   //}
 
+  FlightsPerAirport flights = new FlightsPerAirport(dps);
+  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
+
 }
 
 void draw()
@@ -78,9 +86,9 @@ void draw()
   {
     // code for data display screen (e.g. Graphs, data, etc)
 
-    currentList = new List(dps);
-    currentList.draw();
 
+    //currentList = new List(dps);
+    //currentList.draw();
+    flightBarChart.draw();
   }
-
 }
