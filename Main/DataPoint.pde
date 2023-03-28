@@ -1,4 +1,3 @@
-//C.McCooey - Declared attributes for DataPoint class - 9am 16/03/23
 class DataPoint {
   String flightDate;
   String marketingCarrier;
@@ -36,8 +35,6 @@ class DataPoint {
     //Convert these to date format within constructor?
 
     flightDate = row.getString("FL_DATE");
-    flightDate = flightDate.split(" ")[0]; //C. McCooey - Fixed date to not include redundant hours/minutes - 4pm 16/03/23
-    
     marketingCarrier = row.getString("MKT_CARRIER");
     marketingCarrierFlightNum = row.getInt("MKT_CARRIER_FL_NUM");
 
@@ -59,6 +56,4 @@ class DataPoint {
 
     distance = row.getInt("DISTANCE");
   }
-  
-  
 }
