@@ -1,12 +1,12 @@
-//Ernesto ortiz 22/03
+//Ernesto ortiz 22/03 //<>// //<>//
 final int MARGIN = 30;
-final int GAPPERCENT = 30;
+final int GAPPERCENT = 10;
 class BarChart{
   ArrayList<String> names;
   ArrayList<Integer> frequency;
   int barSize;
-  int largestFreq;
-  int multiple;
+  float largestFreq;
+  float multiple;
   int gap;
   int barSpace;
   PFont arial;
@@ -14,11 +14,11 @@ class BarChart{
   BarChart(ArrayList<String> name, ArrayList<Integer> frequency){
     this.names = name; this.frequency = frequency;
     /*The following is just for testing different sizes of arraylists:
-    for(int count = 0; count<60; count++){  //<>//
+    for(int count = 0; count<60; count++){ 
       names.remove(count); 
       frequency.remove(count);
     }
-    */ //<>//
+    */
     barSize = ((SCREENX-(MARGIN))/names.size())-((GAPPERCENT*((SCREENX-(MARGIN))/names.size()))/100);
     gap = ((GAPPERCENT*((SCREENX-(MARGIN))/names.size()))/100);
     barSpace = ((SCREENX-(MARGIN))/names.size());
@@ -26,11 +26,13 @@ class BarChart{
     largestFreq=0;
     for(Integer freq:frequency){
       if(largestFreq<freq){
-        largestFreq=freq;
+        largestFreq=(float)freq;
       }
     }
-    multiple = -((SCREENY-50)/largestFreq);
-    arial = loadFont("ArialMT-7.vlw");
+    multiple = -((float)(SCREENY-50)/largestFreq);
+
+
+    arial = loadFont("ArialMT-8.vlw");
   }
   
   void draw(){
