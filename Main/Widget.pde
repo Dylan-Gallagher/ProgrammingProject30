@@ -19,13 +19,13 @@ class Widget {
     labelColor = color(0);
   }
   void draw() {
-   
+
     stroke(0);
-    
+
     if (isHovering) {
       stroke(255) ;
     }
-    
+
     fill(widgetColor);
     rect(x, y, width, height);
     textAlign(CENTER, TOP);
@@ -40,7 +40,5 @@ class Widget {
   }
   void setColor(int newColor) {
     widgetColor = newColor;
-      
   }
-
 }
