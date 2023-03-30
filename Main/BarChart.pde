@@ -13,6 +13,7 @@ class BarChart {
   String yAxis;
   float MARGINX;
 
+
   BarChart(ArrayList<String> name, ArrayList<Integer> frequency, String yAxis, String xAxis) {
     this.names = name;
     this.frequency = frequency;
@@ -23,12 +24,14 @@ class BarChart {
     gap = ((GAPPERCENT*((SCREENX-(X))/names.size()))/100);
     barSpace = ((SCREENX + 2000)/names.size());
 
+
     largestFreq=0;
     for (Integer freq : frequency) {
       if (largestFreq<freq) {
         largestFreq=(float)freq;
       }
     }
+    
     multiple = -((float)(SCREENY-200-(MARGINY+30))/largestFreq);
   }
 
