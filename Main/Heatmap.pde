@@ -31,7 +31,7 @@ class Heatmap {
     }
 
 
-    void addOrUpdate(dp) {
+    void addOrUpdate(DataPoint dp) {
         data.put(dp.originAirport, ((data.containsKey(dp.originAirport)) ? data.get(dp.originAirport) + 1 : 1));
     }
 
