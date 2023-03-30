@@ -44,7 +44,7 @@ void setup()
   // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
 
   FlightsPerAirport flights = new FlightsPerAirport(dps);
-  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
+  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports" );
 
 }
 
