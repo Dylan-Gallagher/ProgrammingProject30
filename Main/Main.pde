@@ -49,23 +49,20 @@ void setup()
 
 
 
+  // D. Gallagher - Added code to read in airport CSV data
+  airports = new HashMap<String, float[]>();
   println("Loading airport data...");
   airportsTable = loadTable("airports_new.csv", "header");
 
   for (TableRow row : airportsTable.rows()) {
-    if (row != null) {
-      String iataCode = row.getString("iata_code");
-      float latitude = row.getFloat("latitude_deg");
-      float longitude = row.getFloat("longitude_deg");
-      float[] coords = {latitude, longitude};
-      if (iataCode != null && !iataCode.isEmpty()) {
-        airports.put(iataCode, coords);
-      }
-    }
+    airports.put(row.getString("iata_code"), new float[] {row.getFloat("latitude_deg"), row.getFloat("longitude_deg")});
   }
 
-
   println("Done loading airport data...");
+  
+  // D. Gallagher - Added code to demonstrate heatmap
+  
+  
 
 
   //FlightsPerAirport flights = new FlightsPerAirport(dps);

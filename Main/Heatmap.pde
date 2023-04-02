@@ -18,6 +18,10 @@ class Heatmap {
         this.airports = airports;
         this.min = 99999;
         this.max = 0;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         this.circleSize = 5;
     }
 
