@@ -9,6 +9,10 @@ ArrayList<DataPoint> dps;
 List currentList;
 //BarChart flightBarChart;
 
+
+Table airportsTable;
+HashMap<String, float[]> airports;
+
 SQLite db;
 Query query;
 String currentQuery;
@@ -42,6 +46,13 @@ void setup()
   println("Loaded " + dps.size() + " flights!");
 
   // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
+  
+  
+  airportsTable = loadTable("airports_new.csv", "header");
+  
+  for (TableRow row : airportsTable.rows()) {
+      airports.put(row.getString("iata_code"), new float[] {row.getFloat("latitude_deg"), row.getFloat("longitude_deg")});
+  }
 
   //FlightsPerAirport flights = new FlightsPerAirport(dps);
   //flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports" );
