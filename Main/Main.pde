@@ -63,8 +63,9 @@ void setup()
   // D. Gallagher - Added code to demonstrate heatmap
   // Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height) 
   
-  Heatmap myHeatmap = new Heatmap(dps, airports, 50, 50, 500, 500);
+  Heatmap myHeatmap = new Heatmap(dps, airports, 50, 50, 300, 300);
   myHeatmap.draw();
+  println("done drawing heatmap");
   
 
 
