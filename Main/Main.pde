@@ -17,46 +17,59 @@ SQLite db;
 Query query;
 String currentQuery;
 
-void settings(){
+void settings() {
   size(SCREENX, SCREENY);
 }
 
 void setup()
 {
-  
+
   currentPage = 1;
-  
+
   dps = new ArrayList<DataPoint>();
-  
+
   //TEMPORARY
   ArrayList<String> cols = new ArrayList<String>();
   cols.add("Origin");
-  
-  
+
+
   query = new Query(false, cols, false, "", "FlightDate", true, 2000);
   currentQuery = query.getSQLquery();
   println("Loading data...");
   db = new SQLite(this, "SQLflights.db"); //C.McCooey - Added code to process SQL queries and print result to console - 3pm 23/03/23
-  if(db.connect()){
+  if (db.connect()) {
     db.query(currentQuery);
-    while(db.next()){
+    while (db.next()) {
       dps.add(new DataPoint(db));
     }
   }
   println("Loaded " + dps.size() + " flights!");
 
   // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
-  
-  
+
+
+
+  println("Loading airport data...");
   airportsTable = loadTable("airports_new.csv", "header");
-  
+
   for (TableRow row : airportsTable.rows()) {
-      airports.put(row.getString("iata_code"), new float[] {row.getFloat("latitude_deg"), row.getFloat("longitude_deg")});
+    if (row != null) {
+      String iataCode = row.getString("iata_code");
+      float latitude = row.getFloat("latitude_deg");
+      float longitude = row.getFloat("longitude_deg");
+      float[] coords = {latitude, longitude};
+      if (iataCode != null && !iataCode.isEmpty()) {
+        airports.put(iataCode, coords);
+      }
+    }
   }
+
+
+  println("Done loading airport data...");
+
 
   //FlightsPerAirport flights = new FlightsPerAirport(dps);
   //flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports" );
-
 }
 
 void draw()
