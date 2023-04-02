@@ -3,8 +3,8 @@ class Heatmap {
     int y;
     int width;
     int height;
-    int min;
-    int max;
+    double min;
+    double max;
     int circleSize;
     ArrayList<DataPoint> dps;
     HashMap<String, Double> data;
@@ -16,8 +16,8 @@ class Heatmap {
         this.dps = dps;
         this.data = new HashMap<String, Double>();
         this.airports = airports;
-        this.min = null;
-        this.max = null;
+        this.min = 99999;
+        this.max = 0;
         this.circleSize = 5;
     }
 
@@ -40,13 +40,13 @@ class Heatmap {
     {
         for (String key : data.keySet())
         {
-            int value = data.get(key);
-            if (this.min == null || value < this.min)
+            double value = data.get(key);
+            if (value < this.min)
             {
                 this.min = value;
             }
 
-            if (this.max == null || value > this.max)
+            if (value > this.max)
             {
                 this.max = value;
             }
@@ -55,9 +55,6 @@ class Heatmap {
 
 
     void getIntensity() {
-        double targetMin = 0;
-        double targetMax = 255;
-
         // loop through the data
         for (String key : this.data.keySet())
         {
@@ -83,7 +80,7 @@ class Heatmap {
         // draw each of the circles
         for (String key : this.data.keySet())
         {
-            fill(this.data.get(key));
+            fill(this.data.get(key).intValue());
             ellipse(this.airports.get(key)[0], this.airports.get(key)[0], this.circleSize, this.circleSize);
         }
     }

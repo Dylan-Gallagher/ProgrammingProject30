@@ -7,7 +7,7 @@ int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
 List currentList;
-BarChart flightBarChart;
+//BarChart flightBarChart;
 
 SQLite db;
 Query query;
@@ -43,8 +43,8 @@ void setup()
 
   // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
 
-  FlightsPerAirport flights = new FlightsPerAirport(dps);
-  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports" );
+  //FlightsPerAirport flights = new FlightsPerAirport(dps);
+  //flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports" );
 
 }
 
@@ -61,6 +61,6 @@ void draw()
 
     //currentList = new List(dps);
     //currentList.draw();
-    flightBarChart.draw();
+    //flightBarChart.draw();
   }
 }
