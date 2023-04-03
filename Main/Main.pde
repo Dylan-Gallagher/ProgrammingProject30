@@ -10,6 +10,7 @@ Screen currentScreen;
 
 Screen scrCreateQuery = new Screen(0);
 Screen scrViewBarChart = new Screen(1);
+Screen scrViewFlightList = new Screen(2);
 
 Table table;
 ArrayList<DataPoint> dps;
@@ -26,6 +27,13 @@ ScrollableList ddOrderBy;
 CheckBox cbIncludeFields;
 Button btnGo;
 
+String sortBy;
+StringDict dictFields = new StringDict();
+StringDict dictSortables = new StringDict();
+ArrayList<String> cols = new ArrayList<String>();
+
+
+
 void settings() {
   size(SCREENX, SCREENY);
 }
@@ -38,37 +46,46 @@ void setup()
 
   dps = new ArrayList<DataPoint>();
 
-  //TEMPORARY
-  ArrayList<String> cols = new ArrayList<String>();
-  cols.add("Origin");
+  dictFields.set("0", "OriginCityName");
+  dictFields.set("1", "OriginState");
+  dictFields.set("2", "DestCityName");
+  dictFields.set("3", "DestState");
+  dictFields.set("4", "CRSDepTime");
+  dictFields.set("5", "DepTime");
+  dictFields.set("6", "CRSArrTime");
+  dictFields.set("7", "ArrTime");
+  dictFields.set("8", "ArrDelay");
+  dictFields.set("9", "Cancelled");
+  dictFields.set("10", "Diverted");
+  dictFields.set("11", "Distance");
 
+  dictSortables.set("0", "FlightDate");
+  dictSortables.set("1", "IATA_Code_Marketing_Airline");
+  dictSortables.set("2", "Flight_Number_Marketing_Airline");
+  dictSortables.set("3", "Origin");
+  dictSortables.set("4", "Dest");
 
-  query = new Query(false, cols, false, "", "FlightDate", true, 2000);
-  currentQuery = query.getSQLquery();
-  println("Loading data...");
 
   //C.McCooey - Added code to process SQL queries and print result to console - 3pm 23/03/23
   //C.McCooey - Adjusted code to use currentQuery string and create DataPoints for each row processed - 5pm 28/03/23
-  db = new SQLite(this, "SQLflights.db");
-  if (db.connect()) {
-    db.query(currentQuery);
-    while (db.next()) {
-      dps.add(new DataPoint(db));
-    }
-  }
-  println("Loaded " + dps.size() + " flights!");
+
 
   // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
 
-  FlightsPerAirport flights = new FlightsPerAirport(dps);
-  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
+  //FlightsPerAirport flights = new FlightsPerAirport(dps);
+  //flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
 
   //WIDGETS
 
   //C. McCooey - Added widgets to query entry screen - 11am 29/03/23
-  String[] sortCols = new String[]{"Flight Date", "Flight Number", "Origin Airport", "Destination Airport"};
+  String[] sortCols = new String[]{"Flight Date", "Airline","Flight Number", "Origin Airport", "Destination Airport"};
+  cols.add("FlightDate");
+  cols.add("IATA_Code_Marketing_Airline");
+  cols.add("Flight_Number_Marketing_Airline");
+  cols.add("Origin");
+  cols.add("Dest");
 
-  ddOrderBy = cp5.addScrollableList("Sort by")
+  ddOrderBy = cp5.addScrollableList("SortBy")
     .setPosition(50, SCREENY-200)
     .setSize(200, 100)
     .setBarHeight(20)
@@ -134,17 +151,47 @@ void draw()
     //currentList.draw();
     flightBarChart.draw();
     break;
+  case 2:
+    ddOrderBy.setVisible(false);
+    cbIncludeFields.setVisible(false);
+    btnGo.setVisible(false);
+    
+    
+    
+    break;
   }
   pg.endDraw();
 }
 
-public void controlEvent(ControlEvent event){
+public void controlEvent(ControlEvent event) {
   //C. McCooey - Began to add code to generate query based on input - 2pm 29/03/23
-  if(event.isFrom(btnGo)){
-    println("go go go");
+  if (event.isFrom(btnGo)) {
     java.util.List<Toggle> cbStates = cbIncludeFields.getItems();
-    for(int i = 0; i< cbStates.size(); i++){
-      println(cbIncludeFields.getState(i));
+    for (int i = 0; i< cbStates.size(); i++) {
+      if (cbIncludeFields.getState(i)) {
+        cols.add(dictFields.get(str(i)));
+      }
     }
+    
+    query = new Query(false, cols, false, "", sortBy, true, 50);
+    currentQuery = query.getSQLquery();
+    println(currentQuery);
+    println("Loading data...");
+    
+    int space = 0;
+    db = new SQLite(this, "SQLflights.db");
+    if (db.connect()) {
+      db.query(currentQuery);
+      while (db.next()) {
+        text(db.getInt("FlightDate") + " "+ db.getString("IATA_Code_Marketing_Airline") + db.getString("Flight_Number_Marketing_Airline") + " from " + db.getString("Origin") + " to " + db.getString("Dest"), 0, space);
+        space += 10;
+      }
+    }
+    println("Loaded " + dps.size() + " flights!");
+    currentScreen = scrViewFlightList;
   }
+}
+
+void SortBy(int index) {
+  sortBy = dictSortables.get(cp5.get(ScrollableList.class, "SortBy").getItem(index).get("value").toString());
 }
