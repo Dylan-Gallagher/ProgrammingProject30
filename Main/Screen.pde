@@ -1,8 +1,10 @@
 class Screen {
   ArrayList<Widget> widgetList;
+  int pageNo;
   
-  Screen() {
+  Screen(int num) {
     widgetList = new ArrayList<Widget>();
+    pageNo = num;
   }
 
   void addWidget(Widget widget) {
