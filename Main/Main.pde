@@ -2,20 +2,47 @@ import java.util.*;
 import controlP5.*; //C. McCooey - Imported library for advanced widgets - 11am 29/03/23
 import de.bezier.data.sql.*; //C. McCooey - Imported library to add SQLite integration - 2pm 23/03/23
 
-final int SCREENX = 1920/2;
-final int SCREENY = 1080/2;
-final int EVENT_NULL = -1;
+final int SCREENX = 1920 -100;
+final int SCREENY = 1080-100;
+
+PFont stdFont;
+ArrayList widgetList;
+
+List currentList;
+BarChart flightBarChart;
+
+final int EVENT_BUTTON1=1;
+final int EVENT_BUTTON2=2;
+final int EVENT_BUTTON3=3;
+final int EVENT_BUTTON4=4;
+final int EVENT_BUTTON5=5;
+final int EVENT_BUTTON6=6;
+final int EVENT_BUTTON7=7;
+final int EVENT_SLIDER=0;
+final int EVENT_NULL = 0;
 
 Screen currentScreen;
 
 Screen scrCreateQuery = new Screen(0);
 Screen scrViewBarChart = new Screen(1);
 Screen scrViewFlightList = new Screen(2);
+//Screen dataScreen = new Screen(3);
+
+Slider slider;
+
+String airport = "";
+
+int loadingProgress;
+
+boolean canWrite = false;
+boolean knowsPassword = false;
+;
+
+float right = 65;
 
 Table table;
 ArrayList<DataPoint> dps;
-List currentList;
-BarChart flightBarChart;
+ArrayList<DataPoint> airports = new ArrayList<DataPoint>();
 
 SQLite db;
 Query query;
@@ -32,8 +59,6 @@ StringDict dictFields = new StringDict();
 StringDict dictSortables = new StringDict();
 ArrayList<String> cols = new ArrayList<String>();
 
-
-
 void settings() {
   size(SCREENX, SCREENY);
 }
@@ -45,6 +70,14 @@ void setup()
   currentScreen = scrCreateQuery;
 
   dps = new ArrayList<DataPoint>();
+
+  stdFont=loadFont("Bahnschrift-30.vlw");
+  textFont(stdFont);
+
+  textAlign(CENTER);
+  textSize(20);
+  fill(255);
+  noStroke();
 
   dictFields.set("0", "OriginCityName");
   dictFields.set("1", "OriginState");
@@ -65,20 +98,14 @@ void setup()
   dictSortables.set("3", "Origin");
   dictSortables.set("4", "Dest");
 
-
   //C.McCooey - Added code to process SQL queries and print result to console - 3pm 23/03/23
   //C.McCooey - Adjusted code to use currentQuery string and create DataPoints for each row processed - 5pm 28/03/23
-
-
-  // D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
-
-  //FlightsPerAirport flights = new FlightsPerAirport(dps);
-  //flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights);
+  //D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
 
   //WIDGETS
 
   //C. McCooey - Added widgets to query entry screen - 11am 29/03/23
-  String[] sortCols = new String[]{"Flight Date", "Airline","Flight Number", "Origin Airport", "Destination Airport"};
+  String[] sortCols = new String[]{"Flight Date", "Airline", "Flight Number", "Origin Airport", "Destination Airport"};
   cols.add("FlightDate");
   cols.add("IATA_Code_Marketing_Airline");
   cols.add("Flight_Number_Marketing_Airline");
@@ -86,7 +113,7 @@ void setup()
   cols.add("Dest");
 
   ddOrderBy = cp5.addScrollableList("SortBy")
-    .setPosition(50, SCREENY-200)
+    .setPosition(50, SCREENY-500)
     .setSize(200, 100)
     .setBarHeight(20)
     .setItemHeight(20)
@@ -118,20 +145,59 @@ void setup()
 
   btnGo = cp5.addButton("Go")
     .setValue(0)
-    .setPosition(SCREENX-150, SCREENY-100)
+    .setPosition(300,SCREENY-500)
     .setSize(100, 50)
     ;
+
+  db = new SQLite(this, "SQLflights.db");
+  if (db.connect()) {
+    db.query("SELECT Origin FROM flights");
+    while (db.next()) {
+      airports.add(new DataPoint(true, db));
+    }
+  }
+  FlightsPerAirport flights = new FlightsPerAirport(airports);
+  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports");
+
+  scrCreateQuery.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
+  scrCreateQuery.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
+  scrCreateQuery.addWidget(new Widget(SCREENX/3 * 2 + 1, 1, SCREENX/3, 40, "                          VIEW DATA", color(255), color(0), stdFont, EVENT_BUTTON4));
+  scrCreateQuery.addWidget(slider = new Slider(SCREENX - 40, 60, 20, SCREENY -100, 1, 100, 50, color(255), color(0), stdFont, EVENT_SLIDER));
+
+  scrViewFlightList.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
+  scrViewFlightList.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
+  scrViewFlightList.addWidget(new Widget(SCREENX/3 * 2 + 1, 1, SCREENX/3, 40, "                          VIEW DATA", color(255), color(0), stdFont, EVENT_BUTTON4));
+
+  scrViewBarChart.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
+  scrViewBarChart.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
+  scrViewBarChart.addWidget(new Widget(SCREENX/3 * 2 + 1, 1, SCREENX/3, 40, "                          VIEW DATA", color(255), color(0), stdFont, EVENT_BUTTON4));
+  scrViewBarChart.addWidget(new Widget(SCREENX/2, SCREENY - 100, 180, 40, "Enter your airport here :                                                                                                                                                                                     ", color(255), color(0), stdFont, EVENT_BUTTON2));
+  scrViewBarChart.addWidget(new Widget(952, 672, 70, 15, "                                                                                                                  ", color(255), color(0), stdFont, EVENT_BUTTON6));
+  scrViewBarChart.addWidget(new Widget(872, 672, 70, 15, "                                                                                                                   ", color(255), color(0), stdFont, EVENT_BUTTON1));
+
+  //dataScreen.addWidget(new Widget(100, 360, 80, 20, " ", color(255), color(0), stdFont, EVENT_BUTTON1));
+
+  currentScreen = scrCreateQuery;
 }
 
 void draw()
 {
+  background(190);
+
+  currentScreen.draw();
+
+  if (knowsPassword) {
+    background (0);
+  }
   pg.beginDraw();
   // D.Gallagher - Added code for multiple screens, 11am 16/03/23
   // C.McCooey - Refactored screen switching code to use switch statement and Screen objects - 9am 29/03/23
   switch(currentScreen.pageNo) {
   case 0: //Query screen
     // code for main screen (query data, etc)
-    //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23
+    //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23]
+    currentScreen = scrCreateQuery;
+    airport = "";
     ddOrderBy.show();
     ddOrderBy.draw(pg);
 
@@ -143,21 +209,19 @@ void draw()
 
     break;
   case 1: //Data display screen
+    currentScreen = scrViewBarChart;
     ddOrderBy.hide();
     cbIncludeFields.hide();
-    btnGo.hide();//TEMP
-    // code for data display screen (e.g. Graphs, data, etc)
-    //currentList = new List(dps);
-    //currentList.draw();
     flightBarChart.draw();
+    text(airport, SCREENX/2 + 55, 421);
     break;
   case 2:
+    airport = "";
     ddOrderBy.setVisible(false);
     cbIncludeFields.setVisible(false);
     btnGo.setVisible(false);
-    
-    
-    
+    break;
+  case 3:
     break;
   }
   pg.endDraw();
@@ -172,12 +236,12 @@ public void controlEvent(ControlEvent event) {
         cols.add(dictFields.get(str(i)));
       }
     }
-    
+
     query = new Query(false, cols, false, "", sortBy, true, 50);
     currentQuery = query.getSQLquery();
     println(currentQuery);
     println("Loading data...");
-    
+
     int space = 0;
     db = new SQLite(this, "SQLflights.db");
     if (db.connect()) {
@@ -194,4 +258,98 @@ public void controlEvent(ControlEvent event) {
 
 void SortBy(int index) {
   sortBy = dictSortables.get(cp5.get(ScrollableList.class, "SortBy").getItem(index).get("value").toString());
+}
+
+void mousePressed() {
+
+  int event;
+
+  for (int i = 0; i< currentScreen.widgetList.size(); i++) {
+    Widget aWidget = (Widget)currentScreen.widgetList.get(i);
+    event = aWidget.getEvent(mouseX, mouseY);
+    switch(event) {
+    case EVENT_BUTTON1:
+      if (right != 65) {
+        right += 150;
+      }
+
+      break;
+    case EVENT_BUTTON2:
+      if (currentScreen == scrViewBarChart) {
+        canWrite = true;
+        println("button 2!");
+      }
+      break;
+    case EVENT_BUTTON3:
+      currentScreen = scrViewBarChart;
+      break;
+    case EVENT_BUTTON4:
+      currentScreen = scrViewFlightList;
+      break;
+    case EVENT_BUTTON5:
+      currentScreen = scrCreateQuery;
+      break;
+    case EVENT_BUTTON6:
+      if (right != -1885) {
+        right -= 150;
+      }
+    }
+  }
+}
+
+void mouseMoved() {
+  for (int i = 0; i<currentScreen.widgetList.size(); i++) {
+    Widget aWidget = (Widget) currentScreen.widgetList.get(i);
+    if (aWidget.getEvent(mouseX, mouseY) != EVENT_NULL) {
+      aWidget.isHovering = true;
+    } else {
+      aWidget.isHovering = false;
+    }
+  }
+}
+
+void mouseDragged() {
+  if (slider.isDragging) {
+    slider.sliderPosition = constrain(mouseY - 5, slider.y, slider.y + slider.height - 10);
+    slider.currentValue = round(map(slider.sliderPosition, slider.x, slider.x + slider.width, slider.minValue, slider.maxValue));
+  }
+}
+
+void mouseReleased() {
+  slider.isDragging = false;
+}
+
+void keyPressed() {
+  boolean constrain = true;
+  if (airport.length() >= 3) {
+    constrain = false;
+  }
+  if (canWrite) {
+    if (key==CODED) {
+      if (keyCode==LEFT) {
+        println ("left");
+      } else {
+        println ("unknown special key");
+      }
+    } else {
+      if (key==BACKSPACE) {
+        if (airport.length()>0) {
+          airport = airport.substring(0, airport.length()-1);
+        }
+      } else if (key==RETURN || key==ENTER) {
+        println ("ENTER");
+        if (airport.equals("abcd")) {
+          println("Hurra!");
+          knowsPassword=true;
+          airport = "";
+        } else {
+          knowsPassword=false;
+        }
+      } else {
+        if (constrain) {
+          airport += key;
+        }
+      }
+    }
+  }
 }
