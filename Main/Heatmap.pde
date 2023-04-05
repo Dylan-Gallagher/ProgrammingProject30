@@ -60,15 +60,15 @@ class Heatmap {
   }
 
 
-  void getIntensity() {
-    // loop through the data
-    for (String key : this.data.keySet())
-    {
-      double m = this.data.get(key);
-      double scaledNum = 360 - (((m - this.min) / (this.max - this.min)) * 360);
-      this.data.put(key, scaledNum);
-    }
-  }
+  //void getIntensity() {
+  //  // loop through the data
+  //  for (String key : this.data.keySet())
+  //  {
+  //    double m = this.data.get(key);
+  //    double scaledNum = 360 - (((m - this.min) / (this.max - this.min)) * 360);
+  //    this.data.put(key, scaledNum);
+  //  }
+  //}
 
 
   void drawBackground() {
@@ -80,7 +80,7 @@ class Heatmap {
   {
     populateData();
     getMinAndMax(this.data);
-    getIntensity();
+    //getIntensity();
 
 
     // draw the heatmap
@@ -109,7 +109,10 @@ class Heatmap {
         println("latitude:" + latitudeVal);
 
         //float size = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 1.0, 50.0);
-        fill(this.data.get(key).intValue(), 100, 50);
+        float hue = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 240, 0);
+
+        // Set the color using the calculated hue, and full saturation and brightness
+        fill(hue, 100, 100);
         ellipse(longitudeVal, latitudeVal, this.circleSize, this.circleSize);
       }
     }
