@@ -62,7 +62,7 @@ void setup()
   println("Done loading airport data...");
   
   // D. Gallagher - Added code to show map of USA in background of heatmap
-  statesMap = loadImage("imageOfStates4.png");
+  statesMap = loadImage("imageOfStates5.png");
   
   // D. Gallagher - Added code to demonstrate heatmap
   // Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height) 
