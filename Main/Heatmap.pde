@@ -9,9 +9,10 @@ class Heatmap {
   ArrayList<DataPoint> dps;
   HashMap<String, Double> data;
   HashMap<String, float[]> airports;
+  PImage map;
 
 
-  Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height)
+  Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height, PImage map)
   {
     this.dps = dps;
     this.data = new HashMap<String, Double>();
@@ -23,6 +24,7 @@ class Heatmap {
     this.width = width;
     this.height = height;
     this.circleSize = 5;
+    this.map = map;
   }
 
 
@@ -69,17 +71,24 @@ class Heatmap {
   }
 
 
+  void drawBackground() {
+    image(map, x, y, width, height);
+  }
+
+
   void draw()
   {
     populateData();
     getMinAndMax(this.data);
     getIntensity();
 
+
     // draw the heatmap
 
     // draw a background
     fill(255);
     rect(x, y, this.width, this.height);
+    drawBackground();
 
     //// draw each of the circles
     //for (String key : this.data.keySet())
@@ -94,8 +103,8 @@ class Heatmap {
     for (String key : this.data.keySet()) {
       if (this.airports.containsKey(key)) {
         float[] location = this.airports.get(key);
-        float latitudeVal = map(location[0], 25, 50, y + this.height, y);
-        float longitudeVal = map(location[1], -125, -65, x, x + this.width);
+        float latitudeVal = map(location[0], 10, 71.18, y + this.height, y);
+        float longitudeVal = map(location[1], -126, -66, x, x + this.width);
         println("longitude:" + longitudeVal);
         println("latitude:" + latitudeVal);
 
