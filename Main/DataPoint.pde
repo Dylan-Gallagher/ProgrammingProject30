@@ -19,6 +19,7 @@ class DataPoint {
   int cancelled;
   int diverted;
   int distance;
+  int delay;
 
   //C.McCooey - Wrote initial version of DataPoint constructor - 9am 16/03/23
   //C.McCooey - Updated constructor to accept SQLite table instead of TableRow - 4pm 28/03/23
@@ -46,32 +47,50 @@ class DataPoint {
       marketingCarrierFlightNum = db.getInt("Flight_Number_Marketing_Airline");
 
       originAirport = db.getString("Origin");
-      try{
-      originCity = db.getString("OriginCityName");
-      }catch(Exception e){}     
+      try {
+        originCity = db.getString("OriginCityName");
+      }
+      catch(Exception e) {
+      }
       //originStateAbr = db.getString("OriginState");
       //originWAC = db.getInt("OriginWac");
 
       destinationAirport = db.getString("Dest");
-      try{
-      destinationCity = db.getString("DestCityName");
-      }catch(Exception e){}
+      try {
+        destinationCity = db.getString("DestCityName");
+      }
+      catch(Exception e) {
+      }
       //destinationStateAbr = db.getString("DestState");
       //destinationWAC = db.getInt("DestWac");
-      try{
-      intExpectedDepartureTime = db.getInt("CRSDepTime");
-      }catch(Exception e){}
-      try{
-      intExpectedArrivalTime = db.getInt("CRSArrTime");
-      }catch(Exception e){}
+      try {
+        intExpectedDepartureTime = db.getInt("CRSDepTime");
+      }
+      catch(Exception e) {
+      }
+      try {
+        intExpectedArrivalTime = db.getInt("CRSArrTime");
+      }
+      catch(Exception e) {
+      }
       //Convert these to date format within constructor?
-      
-      try{
-      diverted = db.getInt("Diverted");
-      }catch(Exception e){}
-      try{
-      distance = db.getInt("Distance");
-      }catch(Exception e){}
+
+      try {
+        diverted = db.getInt("Diverted");
+      }
+      catch(Exception e) {
+      }
+      try {
+        distance = db.getInt("Distance");
+      }
+      catch(Exception e) {
+      }
+
+      try {
+        delay = db.getInt("ArrDelay");
+      }
+      catch(Exception e) {
+      }
     }
   }
 }

@@ -76,7 +76,7 @@ public void setup()
 
   dps = new ArrayList<DataPoint>();
 
-  stdFont=loadFont("Bahnschrift-30.vlw");
+  stdFont=loadFont("YuGothicUI-Light-20.vlw");
   textFont(stdFont);
 
   textAlign(CENTER);
@@ -85,17 +85,13 @@ public void setup()
   noStroke();
 
   dictFields.set("0", "OriginCityName");
-  dictFields.set("1", "OriginState");
-  dictFields.set("2", "DestCityName");
-  dictFields.set("3", "DestState");
-  dictFields.set("4", "CRSDepTime");
-  dictFields.set("5", "DepTime");
-  dictFields.set("6", "CRSArrTime");
-  dictFields.set("7", "ArrTime");
-  dictFields.set("8", "ArrDelay");
-  //dictFields.set("9", "Cancelled");
-  dictFields.set("9", "Diverted");
-  dictFields.set("10", "Distance");
+  dictFields.set("1", "DestCityName");
+  dictFields.set("2", "CRSDepTime");
+  dictFields.set("3", "DepTime");
+  dictFields.set("4", "CRSArrTime");
+  dictFields.set("5", "ArrTime");
+  dictFields.set("6", "ArrDelay");
+  dictFields.set("7", "Distance");
 
   dictSortables.set("0", "FlightDate");
   dictSortables.set("1", "IATA_Code_Marketing_Airline");
@@ -135,17 +131,13 @@ public void setup()
     .setSpacingColumn(150)
     .setSpacingRow(20)
     .addItem("Origin City", 0)
-    //.addItem("Origin State", 1)
-    .addItem("Destination City", 2)
-    //.addItem("Destination State", 3)
-    .addItem("Expected Departure Time", 4)
-    .addItem("Actual Departure Time", 5)
-    .addItem("Expected Arrival Time", 6)
-    .addItem("Actual Arrival Time", 7)
-    .addItem("Delay", 8)
-    //.addItem("Cancelled", 9)
-    .addItem("Diverted", 9)
-    .addItem("Distance travelled", 10)
+    .addItem("Destination City", 1)
+    .addItem("Expected Departure Time", 2)
+    .addItem("Actual Departure Time", 3)
+    .addItem("Expected Arrival Time", 4)
+    .addItem("Actual Arrival Time", 5)
+    .addItem("Delay", 6)
+    .addItem("Distance travelled", 7)
     ;
 
   btnGo = cp5.addButton("Go")
@@ -246,6 +238,18 @@ public void draw()
           if (dp.intDepartureTime == dp.intExpectedDepartureTime)currentRecord += " left on schedule";
           else currentRecord += " actually left";
           currentRecord += " at " + dp.intDepartureTime;
+          if(cols.contains("ArrTime"))currentRecord += " and ";
+        }
+        if (cols.contains("ArrTime")) {
+          if (dp.intArrivalTime == dp.intExpectedArrivalTime)currentRecord += " arrived on schedule";
+          else currentRecord += " actually arrived";
+          currentRecord += " at " + dp.intArrivalTime;
+        }
+        
+        if(cols.contains("ArrDelay")){
+          if(dp.delay < 0) currentRecord += " was early by ";
+          else currentRecord += "was delayed ";
+          currentRecord += Math.abs(dp.delay) + " minutes";
         }
       }
 
