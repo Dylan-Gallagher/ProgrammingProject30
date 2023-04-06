@@ -26,11 +26,11 @@ class DataPoint {
     if (isAirportList) {
       originAirport = db.getString("Origin");
     } else {
-      cancelled = db.getInt("CANCELLED");
+      cancelled = db.getInt("Cancelled");
       switch(cancelled) {
       case 0:
-        intDepartureTime = db.getInt("DEP_TIME");
-        intArrivalTime = db.getInt("ARR_TIME");
+        intDepartureTime = db.getInt("DepTime");
+        intArrivalTime = db.getInt("ArrTime");
         break;
       case 1:
       default:
@@ -39,30 +39,39 @@ class DataPoint {
         break;
       }
       //Convert these to date format within constructor?
-
       flightDate = db.getString("FlightDate");
-      flightDate = flightDate.split(" ")[0]; //C. McCooey - Fixed date to not include redundant hours/minutes - 4pm 16/03/23
+      if (flightDate != null)flightDate = flightDate.split(" ")[0]; //C. McCooey - Fixed date to not include redundant hours/minutes - 4pm 16/03/23
 
       marketingCarrier = db.getString("IATA_Code_Marketing_Airline");
       marketingCarrierFlightNum = db.getInt("Flight_Number_Marketing_Airline");
 
       originAirport = db.getString("Origin");
-      originCity = db.getString("ORIGIN_CITY_NAME");
-      originStateAbr = db.getString("ORIGIN_STATE_ABR");
-      originWAC = db.getInt("ORIGIN_WAC");
+      try{
+      originCity = db.getString("OriginCityName");
+      }catch(Exception e){}     
+      //originStateAbr = db.getString("OriginState");
+      //originWAC = db.getInt("OriginWac");
 
-      destinationAirport = db.getString("DEST");
-      destinationCity = db.getString("DEST_CITY_NAME");
-      destinationStateAbr = db.getString("DEST_STATE_ABR");
-      destinationWAC = db.getInt("DEST_WAC");
-
-      intExpectedDepartureTime = db.getInt("CRS_DEP_TIME");
-      intExpectedArrivalTime = db.getInt("CRS_ARR_TIME");
+      destinationAirport = db.getString("Dest");
+      try{
+      destinationCity = db.getString("DestCityName");
+      }catch(Exception e){}
+      //destinationStateAbr = db.getString("DestState");
+      //destinationWAC = db.getInt("DestWac");
+      try{
+      intExpectedDepartureTime = db.getInt("CRSDepTime");
+      }catch(Exception e){}
+      try{
+      intExpectedArrivalTime = db.getInt("CRSArrTime");
+      }catch(Exception e){}
       //Convert these to date format within constructor?
-
-      diverted = db.getInt("DIVERTED");
-
-      distance = db.getInt("DISTANCE");
+      
+      try{
+      diverted = db.getInt("Diverted");
+      }catch(Exception e){}
+      try{
+      distance = db.getInt("Distance");
+      }catch(Exception e){}
     }
   }
 }
