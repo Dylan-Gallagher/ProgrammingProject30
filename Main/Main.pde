@@ -252,8 +252,6 @@ public void draw()
           else currentRecord += " was delayed ";
           currentRecord += Math.abs(dp.delay) + " minutes";
         }
-        
-        z
       }
       recordsDisplaying = true;
       text(currentRecord, 50, 100 + space);
