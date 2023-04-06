@@ -9,22 +9,14 @@ class Heatmap {
   ArrayList<DataPoint> dps;
   HashMap<String, Double> data;
   HashMap<String, float[]> airports;
-  PImage map;
 
 
-  Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height, PImage map)
+  Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height)
   {
     this.dps = dps;
     this.data = new HashMap<String, Double>();
     this.airports = airports;
-    this.min = 99999;
-    this.max = 0;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
     this.circleSize = 5;
-    this.map = map;
   }
 
 
@@ -47,32 +39,36 @@ class Heatmap {
     for (String key : data.keySet())
     {
       double value = data.get(key);
-      if (value < this.min)
-      {
-        this.min = value;
-      }
+      try {
+        if (value < this.min)
+        {
+          this.min = value;
+        }
 
-      if (value > this.max)
-      {
+        if (value > this.max)
+        {
+          this.max = value;
+        }
+      }
+      catch(Exception e) {
+        this.min = value;
         this.max = value;
       }
     }
   }
 
 
-  //void getIntensity() {
-  //  // loop through the data
-  //  for (String key : this.data.keySet())
-  //  {
-  //    double m = this.data.get(key);
-  //    double scaledNum = 360 - (((m - this.min) / (this.max - this.min)) * 360);
-  //    this.data.put(key, scaledNum);
-  //  }
-  //}
+  void getIntensity() {
+    double targetMin = 0;
+    double targetMax = 255;
 
-
-  void drawBackground() {
-    image(map, x, y, width, height);
+    // loop through the data
+    for (String key : this.data.keySet())
+    {
+      double m = this.data.get(key);
+      double scaledNum = 255 - (((m - this.min) / (this.max - this.min)) * 255);
+      this.data.put(key, scaledNum);
+    }
   }
 
 
@@ -80,42 +76,19 @@ class Heatmap {
   {
     populateData();
     getMinAndMax(this.data);
-    //getIntensity();
-
+    getIntensity();
 
     // draw the heatmap
 
     // draw a background
     fill(255);
-    rect(x, y, this.width, this.height);
-    drawBackground();
+    rect(x, y, width, height);
 
-    //// draw each of the circles
-    //for (String key : this.data.keySet())
-    //{
-    //  if (this.airports.containsKey(key))
-    //  {
-    //    fill(this.data.get(key).intValue());
-    //    ellipse(this.airports.get(key)[0], this.airports.get(key)[0], this.circleSize, this.circleSize);
-    //  }
-    //}
-    colorMode(HSB, 360, 100, 100);
-    for (String key : this.data.keySet()) {
-      if (this.airports.containsKey(key)) {
-        float[] location = this.airports.get(key);
-        float latitudeVal = map(location[0], 10, 71.18, y + this.height, y);
-        float longitudeVal = map(location[1], -126, -66, x, x + this.width);
-        println("longitude:" + longitudeVal);
-        println("latitude:" + latitudeVal);
-
-        //float size = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 1.0, 50.0);
-        float hue = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 240, 0);
-
-        // Set the color using the calculated hue, and full saturation and brightness
-        fill(hue, 100, 100);
-        ellipse(longitudeVal, latitudeVal, this.circleSize, this.circleSize);
-      }
+    // draw each of the circles
+    for (String key : this.data.keySet())
+    {
+      fill((int)Math.round(this.data.get(key)));
+      ellipse(this.airports.get(key)[0], this.airports.get(key)[0], this.circleSize, this.circleSize);
     }
-    colorMode(RGB, 255, 255, 255);
   }
 }
