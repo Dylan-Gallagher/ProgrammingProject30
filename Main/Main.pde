@@ -13,6 +13,10 @@ ArrayList widgetList;
 List currentList;
 BarChart flightBarChart;
 
+PImage statesMap;
+Table airportsTable;
+HashMap<String, float[]> airportsHashMap;
+
 final int EVENT_BUTTON1=1;
 final int EVENT_BUTTON2=2;
 final int EVENT_BUTTON3=3;
@@ -170,6 +174,27 @@ public void setup()
   scrViewBarChart.addWidget(new Widget(872, 672, 70, 15, "                                                                                                                   ", color(255), color(0), stdFont, EVENT_BUTTON1));
 
   //dataScreen.addWidget(new Widget(100, 360, 80, 20, " ", color(255), color(0), stdFont, EVENT_BUTTON1));
+
+  // D. Gallagher - Added code to read in airport CSV data
+  airportsHashMap = new HashMap<String, float[]>();
+  println("Loading airport data...");
+  airportsTable = loadTable("airports_new.csv", "header");
+
+  for (TableRow row : airportsTable.rows()) {
+    airportsHashMap.put(row.getString("iata_code"), new float[] {row.getFloat("latitude_deg"), row.getFloat("longitude_deg")});
+  }
+
+  println("Done loading airport data...");
+  
+  // D. Gallagher - Added code to show map of USA in background of heatmap
+  statesMap = loadImage("imageOfStates5.png");
+  
+  // D. Gallagher - Added code to demonstrate heatmap
+  // Heatmap (ArrayList<DataPoint> dps, HashMap<String, float[]> airports, int x, int y, int width, int height) 
+  
+  Heatmap myHeatmap = new Heatmap(dps, airportsHashMap, 0, 0, 500, 500, statesMap);
+  myHeatmap.draw();
+  println("done drawing heatmap");
 
   currentScreen = scrCreateQuery;
 }
