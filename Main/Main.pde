@@ -56,7 +56,7 @@ ScrollableList ddOrderBy;
 CheckBox cbIncludeFields;
 Button btnGo;
 
-String sortBy;
+String sortBy = "FlightDate";
 StringDict dictFields = new StringDict();
 StringDict dictSortables = new StringDict();
 ArrayList<String> cols = new ArrayList<String>();
@@ -107,11 +107,6 @@ public void setup()
 
   //C. McCooey - Added widgets to query entry screen - 11am 29/03/23
   String[] sortCols = new String[]{"Flight Date", "Airline", "Flight Number", "Origin Airport", "Destination Airport"};
-  //cols.add("FlightDate");
-  //cols.add("IATA_Code_Marketing_Airline");
-  //cols.add("Flight_Number_Marketing_Airline");
-  //cols.add("Origin");
-  //cols.add("Dest");
 
   ddOrderBy = cp5.addScrollableList("SortBy")
     .setPosition(50, SCREENY-500)
@@ -234,6 +229,7 @@ public void draw()
       if (dp.cancelled == 1) {
         currentRecord += " was cancelled";
       } else {
+        if(cols.contains("Distance")) currentRecord += " (a distance of " + dp.distance + " miles)";
         if (cols.contains("DepTime")) {
           if (dp.intDepartureTime == dp.intExpectedDepartureTime)currentRecord += " left on schedule";
           else currentRecord += " actually left";
@@ -247,13 +243,16 @@ public void draw()
         }
         
         if(cols.contains("ArrDelay")){
+          if(cols.contains("DepTime") || cols.contains("ArrTime")) currentRecord += " and";
           if(dp.delay < 0) currentRecord += " was early by ";
-          else currentRecord += "was delayed ";
+          else currentRecord += " was delayed ";
           currentRecord += Math.abs(dp.delay) + " minutes";
         }
+        
+        
       }
 
-      text(currentRecord, 200, 100 + space);
+      text(currentRecord, 50, 100 + space);
       space += 20;
       currentRecord = "";
     }
