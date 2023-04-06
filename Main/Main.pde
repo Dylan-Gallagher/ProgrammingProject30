@@ -64,6 +64,8 @@ ArrayList<String> cols = new ArrayList<String>();
 String currentRecord;
 int space;
 
+boolean recordsDisplaying = false;
+
 public void settings() {
   size(SCREENX, SCREENY);
 }
@@ -174,7 +176,7 @@ public void setup()
 
 public void draw()
 {
-  background(190);
+  if(!recordsDisplaying) background(190);
 
   currentScreen.draw();
 
@@ -187,6 +189,7 @@ public void draw()
   switch(currentScreen.pageNo) {
   case 0: //Query screen
     //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23]
+    recordsDisplaying = false;
     currentScreen = scrCreateQuery;
     airport = "";
     ddOrderBy.show();
@@ -207,6 +210,7 @@ public void draw()
 
     break;
   case 1: //Data display screen
+    recordsDisplaying = false;
     ddOrderBy.hide();
     cbIncludeFields.hide();
     flightBarChart.draw();
@@ -249,14 +253,13 @@ public void draw()
           currentRecord += Math.abs(dp.delay) + " minutes";
         }
         
-        
+        z
       }
-
+      recordsDisplaying = true;
       text(currentRecord, 50, 100 + space);
       space += 20;
       currentRecord = "";
     }
-    noLoop();
     break;
   }
   pg.endDraw();
