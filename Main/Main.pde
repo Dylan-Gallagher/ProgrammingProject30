@@ -10,6 +10,10 @@ final int SCREENY = 1080-100;
 PFont stdFont;
 ArrayList widgetList;
 
+PImage statesMap;
+Table airportsTable;
+HashMap<String, float[]> airportsHashMap;
+
 List currentList;
 BarChart flightBarChart;
 
@@ -172,6 +176,20 @@ public void setup()
   //dataScreen.addWidget(new Widget(100, 360, 80, 20, " ", color(255), color(0), stdFont, EVENT_BUTTON1));
 
   currentScreen = scrCreateQuery;
+  
+  // Initialise airport HashMap for Heatmap class
+  airportsHashMap= new HashMap<String, float[]>();
+  println("Loading airport data...");
+  airportsTable = loadTable("airports_new.csv", "header");
+
+  for (TableRow row : airportsTable.rows()) {
+    airportsHashMap.put(row.getString("iata_code"), new float[] {row.getFloat("latitude_deg"), row.getFloat("longitude_deg")});
+  }
+
+  println("Done loading airport data...");
+  
+  // D. Gallagher - Added code to show map of USA in background of heatmap
+  statesMap = loadImage("imageOfStates5.png");
 }
 
 public void draw()
