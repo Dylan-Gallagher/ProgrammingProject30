@@ -7,10 +7,10 @@ int currentPage;
 Table table;
 ArrayList<DataPoint> dps;
 List currentList;
+
+
+
 PImage statesMap;
-//BarChart flightBarChart;
-
-
 Table airportsTable;
 HashMap<String, float[]> airports;
 

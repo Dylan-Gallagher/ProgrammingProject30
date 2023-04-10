@@ -100,6 +100,7 @@ class Heatmap {
     //  }
     //}
     colorMode(HSB, 360, 100, 100);
+    noStroke();
     for (String key : this.data.keySet()) {
       if (this.airports.containsKey(key)) {
         float[] location = this.airports.get(key);
@@ -113,7 +114,9 @@ class Heatmap {
 
         // Set the color using the calculated hue, and full saturation and brightness
         fill(hue, 100, 100);
-        ellipse(longitudeVal, latitudeVal, this.circleSize, this.circleSize);
+        
+        float adjustedCircleSize = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 4, 15);
+        ellipse(longitudeVal, latitudeVal, adjustedCircleSize, adjustedCircleSize);
       }
     }
     colorMode(RGB, 255, 255, 255);
