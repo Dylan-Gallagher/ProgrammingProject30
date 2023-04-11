@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"de.bezier.data.sql"},{"l":"de.bezier.data.sql.mapper"}]

@@ -1,6 +1,4 @@
-import controlP5.*; //<>// //<>//
-
-//C. McCooey - Merged code into one main file - 12pm 05/04/23
+//C. McCooey - Merged code into one main file - 12pm 05/04/23 //<>// //<>//
 
 import controlP5.*; //C. McCooey - Imported library for advanced widgets - 11am 29/03/23
 import de.bezier.data.sql.*;
@@ -9,7 +7,7 @@ import de.bezier.data.sql.mapper.*; //C. McCooey - Imported libraries to add SQL
 final int SCREENX = 1920 -100;
 final int SCREENY = 1080-100;
 
-PFont stdFont; //<>//
+PFont stdFont;
 ArrayList widgetList;
 
 List currentList;
@@ -42,7 +40,7 @@ int loadingProgress;
 
 boolean canWrite = false;
 boolean knowsPassword = false;
-;
+
 
 float right = 65;
 
@@ -50,7 +48,7 @@ Table table;
 ArrayList<DataPoint> dps;
 ArrayList<DataPoint> airports = new ArrayList<DataPoint>();
 ArrayList<DataPoint> statesList = new ArrayList<DataPoint>();
-ArrayList<DataPoint> airlineList = new ArrayList<DataPoint>();
+ArrayList<DataPoint> airlinesList = new ArrayList<DataPoint>();
 
 SQLite db;
 Query query;
@@ -152,25 +150,35 @@ public void setup()
   if (db.connect()) {
     db.query("SELECT Origin FROM flights");
     while (db.next()) {
-      airports.add(new DataPoint(true, false, db));
+      airports.add(new DataPoint(true, false, false, db));
     }
   }
-  
+
   db = new SQLite(this, "SQLflights.db");
   if (db.connect()) {
     db.query("SELECT OriginState FROM flights");
     while (db.next()) {
-      statesList.add(new DataPoint(false, true, db));
+      statesList.add(new DataPoint(false, true, false, db));
+    }
+  }
+
+  db = new SQLite(this, "SQLFlights.db");
+  if (db.connect()) {
+    db.query("SELECT IATA_Code_Marketing_Airline, Distance FROM flights");
+    while (db.next()) {
+      airlinesList.add(new DataPoint(false, false, true, db));
     }
   }
   FlightsPerAirport flights = new FlightsPerAirport(airports);
   flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "Number of Flights", "Airports");
-  
+
   FlightsPerState states = new FlightsPerState(statesList);
   stateBarChart = new BarChart(states.stateNames, states.numberOfFlights, "Number of Flights", "States");
- 
-  //DistancePerAirline airline = new DistancePerAirline(airlineList);
-  //airlineBarChart = new BarChart(airline.airlineNames, airline.distanceTravelled, "Distance Travelled", "Airlines");
+
+  DistancePerAirline airlineDistances = new DistancePerAirline(airlinesList);
+  airlineBarChart = new BarChart(airlineDistances.airlineNames, airlineDistances.distanceTravelled, "Distance Travelled", "Airlines");
+  
+  
 
   scrCreateQuery.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
   scrCreateQuery.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
@@ -191,12 +199,11 @@ public void setup()
   //dataScreen.addWidget(new Widget(100, 360, 80, 20, " ", color(255), color(0), stdFont, EVENT_BUTTON1));
 
   currentScreen = scrCreateQuery;
-
 }
 
 public void draw()
 {
-  if(!recordsDisplaying) background(190);
+  if (!recordsDisplaying) background(190);
 
   currentScreen.draw();
 
@@ -234,8 +241,8 @@ public void draw()
     ddOrderBy.hide();
     cbIncludeFields.hide();
     //flightBarChart.draw();
-    stateBarChart.draw();
-    //airlineBarChart.draw();
+    //stateBarChart.draw();
+    airlineBarChart.draw();
     text(airport, SCREENX/2 + 55, 421);
     break;
   case 2:
@@ -282,6 +289,7 @@ public void draw()
       currentRecord = "";
     }
     noLoop();
+    dps = new ArrayList<DataPoint>();
     break;
   }
   pg.endDraw();
@@ -296,22 +304,22 @@ public void controlEvent(ControlEvent event) {
         cols.add(dictFields.get(str(i)));
       }
     }
-
+    cols = new ArrayList<String>();
     //query = new Query(false, cols, false, "", sortBy, true, 50);
     //currentQuery = query.getSQLquery();
     currentQuery = "SELECT * FROM flights ORDER BY " + sortBy + " ASC LIMIT 500";
     println(currentQuery);
     println("Loading data...");
-      db = new SQLite(this, "SQLflights.db");
-  if (db.connect()) {
-    db.query(currentQuery);
-    while (db.next()) {
-      dps.add(new DataPoint(false, false, db));
+    db = new SQLite(this, "SQLflights.db");
+    if (db.connect()) {
+      db.query(currentQuery);
+      while (db.next()) {
+        dps.add(new DataPoint(false, false, false, db));
+      }
     }
+    println("Loaded " + dps.size() + " flights!");
+    currentScreen = scrViewFlightList;
   }
-  }
-  println("Loaded " + dps.size() + " flights!");
-  currentScreen = scrViewFlightList;
 }
 
 
