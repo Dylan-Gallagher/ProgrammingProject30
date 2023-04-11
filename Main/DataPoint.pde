@@ -1,6 +1,7 @@
 //C.McCooey - Declared attributes for DataPoint class - 9am 16/03/23
 class DataPoint {
   boolean isAirportList;
+  boolean isStateList;
   String flightDate;
   String marketingCarrier;
   int marketingCarrierFlightNum;
@@ -23,9 +24,11 @@ class DataPoint {
 
   //C.McCooey - Wrote initial version of DataPoint constructor - 9am 16/03/23
   //C.McCooey - Updated constructor to accept SQLite table instead of TableRow - 4pm 28/03/23
-  DataPoint(boolean isAirportList, SQLite db) {
+  DataPoint(boolean isAirportList, boolean isStateList, SQLite db) {
     if (isAirportList) {
       originAirport = db.getString("Origin");
+    } else if (isStateList) {
+      originStateAbr = db.getString("OriginState");
     } else {
       cancelled = db.getInt("Cancelled");
       switch(cancelled) {
@@ -52,7 +55,7 @@ class DataPoint {
       }
       catch(Exception e) {
       }
-      //originStateAbr = db.getString("OriginState");
+      originStateAbr = db.getString("OriginState");
       //originWAC = db.getInt("OriginWac");
 
       destinationAirport = db.getString("Dest");
@@ -61,7 +64,7 @@ class DataPoint {
       }
       catch(Exception e) {
       }
-      //destinationStateAbr = db.getString("DestState");
+      destinationStateAbr = db.getString("DestState");
       //destinationWAC = db.getInt("DestWac");
       try {
         intExpectedDepartureTime = db.getInt("CRSDepTime");

@@ -1,4 +1,4 @@
-final float MARGINY = 350; //<>//
+final float MARGINY = 350;
 final float GAPPERCENT = 30;
 
 class BarChart {
@@ -14,8 +14,8 @@ class BarChart {
   float MARGINX;
 
 
-  BarChart(ArrayList<String> name, ArrayList<Integer> frequency, String yAxis, String xAxis) {
-    this.names = name;
+  BarChart(ArrayList<String> name, ArrayList<Integer> frequency, String yAxis, String xAxis) { //<>//
+    this.names = name; //<>//
     this.frequency = frequency;
     this.xAxis = xAxis;
     this.yAxis = yAxis;
@@ -32,7 +32,7 @@ class BarChart {
       }
     }
     
-    multiple = -((float)(SCREENY-200-(MARGINY+30))/largestFreq);
+    multiple = -((float)(SCREENY-200-(MARGINY+30))/largestFreq); //<>//
   }
 
   void draw() {
@@ -47,25 +47,21 @@ class BarChart {
       rect(MARGINX + (barSpace)*counter, SCREENY-MARGINY, barSize, multiple*freq);
 
       fill(0);
-      if (barSize/1.5>18) {
-        textSize(18);
-      } else {
-        textSize(barSize/1.5);
-        textAlign(CENTER);
-        text(freq, MARGINX + barSize/2 + (barSpace)*counter, SCREENY-MARGINY+(multiple*freq)-10);
-        counter++;
-      }
+      if (barSize/1.5>18) textSize(18);
+      else textSize(barSize/1.5);
+      textAlign(CENTER);
+      text(freq, MARGINX + barSize/2 + (barSpace)*counter, SCREENY-MARGINY+(multiple*freq)-10);
+      counter++;
     }
     counter = 0;
     for (String name : names) {
-      if (barSize/2>17) {
-        textSize(17);
-      } else {
-        textSize(barSize/2);
-        textAlign(CENTER);
-        text(name, MARGINX + barSize/2 + barSpace*counter, SCREENY+15-(MARGINY));
-        counter++;
-      }
+
+      fill(0);
+      if (barSize/2>17) textSize(17);
+      else textSize(barSize/2);
+      textAlign(CENTER);
+      text(name, MARGINX + barSize/2 + barSpace*counter, SCREENY+15-(MARGINY));
+      counter++;
     }
     fill(190);
     rect(0, 50, 64, 600); 

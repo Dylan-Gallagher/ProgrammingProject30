@@ -12,6 +12,7 @@ ArrayList widgetList;
 
 List currentList;
 BarChart flightBarChart;
+BarChart stateBarChart;
 
 final int EVENT_BUTTON1=1;
 final int EVENT_BUTTON2=2;
@@ -45,6 +46,7 @@ float right = 65;
 Table table;
 ArrayList<DataPoint> dps;
 ArrayList<DataPoint> airports = new ArrayList<DataPoint>();
+ArrayList<DataPoint> statesList = new ArrayList<DataPoint>();
 
 SQLite db;
 Query query;
@@ -63,8 +65,6 @@ ArrayList<String> cols = new ArrayList<String>();
 
 String currentRecord;
 int space;
-
-boolean recordsDisplaying = false;
 
 public void settings() {
   size(SCREENX, SCREENY);
@@ -147,11 +147,22 @@ public void setup()
   if (db.connect()) {
     db.query("SELECT Origin FROM flights");
     while (db.next()) {
-      airports.add(new DataPoint(true, db));
+      airports.add(new DataPoint(true, false, db));
+    }
+  }
+  
+  db = new SQLite(this, "SQLflights.db");
+  if (db.connect()) {
+    db.query("SELECT OriginState FROM flights");
+    while (db.next()) {
+      statesList.add(new DataPoint(false, true, db));
     }
   }
   FlightsPerAirport flights = new FlightsPerAirport(airports);
-  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfAirports", "Airports");
+  flightBarChart = new BarChart(flights.airportNames, flights.numberOfFlights, "NumberOfFlights", "Airports");
+  
+  FlightsPerState states = new FlightsPerState(statesList);
+  stateBarChart = new BarChart(states.stateNames, states.numberOfFlights, "NumberOfFlights", "States"); //<>//
 
   scrCreateQuery.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
   scrCreateQuery.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
@@ -171,12 +182,13 @@ public void setup()
 
   //dataScreen.addWidget(new Widget(100, 360, 80, 20, " ", color(255), color(0), stdFont, EVENT_BUTTON1));
 
-  currentScreen = scrCreateQuery;
+  currentScreen = scrCreateQuery; //<>//
+
 }
 
 public void draw()
 {
-  if(!recordsDisplaying) background(190);
+  background(190);
 
   currentScreen.draw();
 
@@ -189,7 +201,6 @@ public void draw()
   switch(currentScreen.pageNo) {
   case 0: //Query screen
     //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23]
-    recordsDisplaying = false;
     currentScreen = scrCreateQuery;
     airport = "";
     ddOrderBy.show();
@@ -210,10 +221,10 @@ public void draw()
 
     break;
   case 1: //Data display screen
-    recordsDisplaying = false;
     ddOrderBy.hide();
     cbIncludeFields.hide();
     flightBarChart.draw();
+    //stateBarChart.draw();
     text(airport, SCREENX/2 + 55, 421);
     break;
   case 2:
@@ -233,31 +244,32 @@ public void draw()
       if (dp.cancelled == 1) {
         currentRecord += " was cancelled";
       } else {
-        if(cols.contains("Distance")) currentRecord += " (a distance of " + dp.distance + " miles)";
+        if (cols.contains("Distance")) currentRecord += " (a distance of " + dp.distance + " miles)";
         if (cols.contains("DepTime")) {
           if (dp.intDepartureTime == dp.intExpectedDepartureTime)currentRecord += " left on schedule";
           else currentRecord += " actually left";
           currentRecord += " at " + dp.intDepartureTime;
-          if(cols.contains("ArrTime"))currentRecord += " and ";
+          if (cols.contains("ArrTime"))currentRecord += " and ";
         }
         if (cols.contains("ArrTime")) {
           if (dp.intArrivalTime == dp.intExpectedArrivalTime)currentRecord += " arrived on schedule";
           else currentRecord += " actually arrived";
           currentRecord += " at " + dp.intArrivalTime;
         }
-        
-        if(cols.contains("ArrDelay")){
-          if(cols.contains("DepTime") || cols.contains("ArrTime")) currentRecord += " and";
-          if(dp.delay < 0) currentRecord += " was early by ";
+
+        if (cols.contains("ArrDelay")) {
+          if (cols.contains("DepTime") || cols.contains("ArrTime")) currentRecord += " and";
+          if (dp.delay < 0) currentRecord += " was early by ";
           else currentRecord += " was delayed ";
           currentRecord += Math.abs(dp.delay) + " minutes";
         }
       }
-      recordsDisplaying = true;
+
       text(currentRecord, 50, 100 + space);
       space += 20;
       currentRecord = "";
     }
+    noLoop();
     break;
   }
   pg.endDraw();
@@ -278,18 +290,18 @@ public void controlEvent(ControlEvent event) {
     currentQuery = "SELECT * FROM flights ORDER BY " + sortBy + " ASC LIMIT 500";
     println(currentQuery);
     println("Loading data...");
-
-    db = new SQLite(this, "SQLflights.db");
-    if (db.connect()) {
-      db.query(currentQuery);
-      while (db.next()) {
-        dps.add(new DataPoint(false, db));
-      }
+      db = new SQLite(this, "SQLflights.db");
+  if (db.connect()) {
+    db.query(currentQuery);
+    while (db.next()) {
+      dps.add(new DataPoint(false, false, db));
     }
-    println("Loaded " + dps.size() + " flights!");
-    currentScreen = scrViewFlightList;
   }
+  }
+  println("Loaded " + dps.size() + " flights!");
+  currentScreen = scrViewFlightList;
 }
+
 
 public void SortBy(int index) {
   sortBy = dictSortables.get(cp5.get(ScrollableList.class, "SortBy").getItem(index).get("value").toString());
