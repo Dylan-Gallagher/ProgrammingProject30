@@ -69,6 +69,7 @@ ArrayList<String> cols = new ArrayList<String>();
 
 String currentRecord;
 int space;
+boolean recordsDisplaying = false;
 
 public void settings() {
   size(SCREENX, SCREENY);
@@ -168,8 +169,8 @@ public void setup()
   FlightsPerState states = new FlightsPerState(statesList);
   stateBarChart = new BarChart(states.stateNames, states.numberOfFlights, "Number of Flights", "States");
  
-  DistancePerAirline airline = new DistancePerAirline(airlineList);
-  airlineBarChart = new BarChart(airline.airlineNames, airline.distanceTravelled, "Distance Travelled", "Airlines");
+  //DistancePerAirline airline = new DistancePerAirline(airlineList);
+  //airlineBarChart = new BarChart(airline.airlineNames, airline.distanceTravelled, "Distance Travelled", "Airlines");
 
   scrCreateQuery.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
   scrCreateQuery.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
@@ -195,7 +196,7 @@ public void setup()
 
 public void draw()
 {
-  background(190);
+  if(!recordsDisplaying) background(190);
 
   currentScreen.draw();
 
@@ -208,6 +209,7 @@ public void draw()
   switch(currentScreen.pageNo) {
   case 0: //Query screen
     //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23]
+    recordsDisplaying = false;
     currentScreen = scrCreateQuery;
     airport = "";
     ddOrderBy.show();
@@ -228,11 +230,12 @@ public void draw()
 
     break;
   case 1: //Data display screen
+    recordsDisplaying = false;
     ddOrderBy.hide();
     cbIncludeFields.hide();
     //flightBarChart.draw();
-    //stateBarChart.draw();
-    airlineBarChart.draw();
+    stateBarChart.draw();
+    //airlineBarChart.draw();
     text(airport, SCREENX/2 + 55, 421);
     break;
   case 2:
@@ -272,6 +275,7 @@ public void draw()
           currentRecord += Math.abs(dp.delay) + " minutes";
         }
       }
+      recordsDisplaying = true;
 
       text(currentRecord, 50, 100 + space);
       space += 20;
