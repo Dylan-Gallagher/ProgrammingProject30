@@ -1,5 +1,6 @@
 //C.McCooey - Declared attributes for DataPoint class - 9am 16/03/23
 class DataPoint {
+  boolean isAirportList;
   String flightDate;
   String marketingCarrier;
   int marketingCarrierFlightNum;
@@ -11,54 +12,85 @@ class DataPoint {
   String destinationCity;
   String destinationStateAbr;
   int destinationWAC;
-  int intExpectedDepartureTime; //CRS_DEP_TIME?
+  int intExpectedDepartureTime;
   int intDepartureTime;
   int intExpectedArrivalTime;
   int intArrivalTime;
   int cancelled;
   int diverted;
   int distance;
+  int delay;
 
   //C.McCooey - Wrote initial version of DataPoint constructor - 9am 16/03/23
-  DataPoint(TableRow row) {
-    cancelled = row.getInt("CANCELLED");
-    switch(cancelled) {
-    case 0:
-      intDepartureTime = row.getInt("DEP_TIME");
-      intArrivalTime = row.getInt("ARR_TIME");
-      break;
-    case 1:
-    default:
-      intDepartureTime = -1;
-      intArrivalTime = -1;
-      break;
+  //C.McCooey - Updated constructor to accept SQLite table instead of TableRow - 4pm 28/03/23
+  DataPoint(boolean isAirportList, SQLite db) {
+    if (isAirportList) {
+      originAirport = db.getString("Origin");
+    } else {
+      cancelled = db.getInt("Cancelled");
+      switch(cancelled) {
+      case 0:
+        intDepartureTime = db.getInt("DepTime");
+        intArrivalTime = db.getInt("ArrTime");
+        break;
+      case 1:
+      default:
+        intDepartureTime = -1;
+        intArrivalTime = -1;
+        break;
+      }
+      //Convert these to date format within constructor?
+      flightDate = db.getString("FlightDate");
+      if (flightDate != null)flightDate = flightDate.split(" ")[0]; //C. McCooey - Fixed date to not include redundant hours/minutes - 4pm 16/03/23
+
+      marketingCarrier = db.getString("IATA_Code_Marketing_Airline");
+      marketingCarrierFlightNum = db.getInt("Flight_Number_Marketing_Airline");
+
+      originAirport = db.getString("Origin");
+      try {
+        originCity = db.getString("OriginCityName");
+      }
+      catch(Exception e) {
+      }
+      //originStateAbr = db.getString("OriginState");
+      //originWAC = db.getInt("OriginWac");
+
+      destinationAirport = db.getString("Dest");
+      try {
+        destinationCity = db.getString("DestCityName");
+      }
+      catch(Exception e) {
+      }
+      //destinationStateAbr = db.getString("DestState");
+      //destinationWAC = db.getInt("DestWac");
+      try {
+        intExpectedDepartureTime = db.getInt("CRSDepTime");
+      }
+      catch(Exception e) {
+      }
+      try {
+        intExpectedArrivalTime = db.getInt("CRSArrTime");
+      }
+      catch(Exception e) {
+      }
+      //Convert these to date format within constructor?
+
+      try {
+        diverted = db.getInt("Diverted");
+      }
+      catch(Exception e) {
+      }
+      try {
+        distance = db.getInt("Distance");
+      }
+      catch(Exception e) {
+      }
+
+      try {
+        delay = db.getInt("ArrDelay");
+      }
+      catch(Exception e) {
+      }
     }
-    //Convert these to date format within constructor?
-
-    flightDate = row.getString("FL_DATE");
-    flightDate = flightDate.split(" ")[0]; //C. McCooey - Fixed date to not include redundant hours/minutes - 4pm 16/03/23
-    
-    marketingCarrier = row.getString("MKT_CARRIER");
-    marketingCarrierFlightNum = row.getInt("MKT_CARRIER_FL_NUM");
-
-    originAirport = row.getString("ORIGIN");
-    originCity = row.getString("ORIGIN_CITY_NAME");
-    originStateAbr = row.getString("ORIGIN_STATE_ABR");
-    originWAC = row.getInt("ORIGIN_WAC");
-
-    destinationAirport = row.getString("DEST");
-    destinationCity = row.getString("DEST_CITY_NAME");
-    destinationStateAbr = row.getString("DEST_STATE_ABR");
-    destinationWAC = row.getInt("DEST_WAC");
-
-    intExpectedDepartureTime = row.getInt("CRS_DEP_TIME");
-    intExpectedArrivalTime = row.getInt("CRS_ARR_TIME");
-    //Convert these to date format within constructor?
-
-    diverted = row.getInt("DIVERTED");
-
-    distance = row.getInt("DISTANCE");
   }
-  
-  
 }

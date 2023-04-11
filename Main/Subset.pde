@@ -1,5 +1,3 @@
-// D.Gallagher - Added Subset class to filter by airport - 12pm 16/03/23
-
 class Subset {
   ArrayList<DataPoint> data;
 
