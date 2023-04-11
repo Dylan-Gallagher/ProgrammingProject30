@@ -1,4 +1,4 @@
-//C. McCooey - Merged code into one main file - 12pm 05/04/23 //<>// //<>//
+//C. McCooey - Merged code into one main file - 12pm 05/04/23 //<>// //<>// //<>// //<>//
 
 import controlP5.*; //C. McCooey - Imported library for advanced widgets - 11am 29/03/23
 import de.bezier.data.sql.*;
@@ -183,7 +183,8 @@ public void setup()
   scrCreateQuery.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
   scrCreateQuery.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
   scrCreateQuery.addWidget(new Widget(SCREENX/3 * 2 + 1, 1, SCREENX/3, 40, "                          VIEW DATA", color(255), color(0), stdFont, EVENT_BUTTON4));
-  scrCreateQuery.addWidget(slider = new Slider(SCREENX - 40, 60, 20, SCREENY -100, 1, 100, 50, color(255), color(0), stdFont, EVENT_SLIDER));
+  
+  scrViewFlightList.addWidget(slider = new Slider(SCREENX - 40, 60, 20, SCREENY -100, 1, 100, 50, color(255), color(0), stdFont, EVENT_SLIDER));
 
   scrViewFlightList.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
   scrViewFlightList.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
