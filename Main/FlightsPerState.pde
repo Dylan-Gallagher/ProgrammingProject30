@@ -1,32 +1,32 @@
-//Ernesto ortiz 22/03
-class FlightsPerAirport{
+//Ernesto ortiz 04/04
+class FlightsPerState{ //<>//
   ArrayList<DataPoint> flights;
-  ArrayList<String> airportNames;
+  ArrayList<String> stateNames;
   ArrayList<Integer> numberOfFlights;
   
-  FlightsPerAirport(ArrayList<DataPoint> flights){
+  FlightsPerState(ArrayList<DataPoint> flights){
     this.flights = flights;
     for(DataPoint dp : flights){
-      if(airportNames==null){
-        airportNames = new ArrayList<String>();
-        airportNames.add(new String(dp.originAirport));
+      if(stateNames==null){
+        stateNames = new ArrayList<String>();
+        stateNames.add(new String(dp.originStateAbr));
         numberOfFlights = new ArrayList<Integer>();
         numberOfFlights.add(1);
       }
-      else if (newAirportCheck(dp.originAirport, airportNames)){
-        airportNames.add(new String(dp.originAirport));
+      else if (newAirportCheck(dp.originStateAbr, stateNames)){
+        stateNames.add(new String(dp.originStateAbr));
         numberOfFlights.add(1);
       }
-      else if (!newAirportCheck(dp.originAirport, airportNames)){
-        numberOfFlights = addFlight(dp.originAirport, airportNames, numberOfFlights);
+      else if (!newAirportCheck(dp.originStateAbr, stateNames)){
+        numberOfFlights = addFlight(dp.originStateAbr, stateNames, numberOfFlights);
       }     
     }
-    //for (int i = 0; i < airportNames.size(); i++){
-    //  System.out.print(airportNames.get(i) + " ");
-    //}
-    //for (int i = 0; i < numberOfFlights.size(); i++){
-    //  System.out.print(numberOfFlights.get(i) + " ");
-    //}
+    for (int i = 0; i < stateNames.size(); i++){
+      System.out.print(stateNames.get(i) + "\", \"");
+    }
+    for (int i = 0; i < numberOfFlights.size(); i++){
+      System.out.print(numberOfFlights.get(i) + ", ");
+    }
   }
   
   boolean newAirportCheck(String airport, ArrayList<String> airportList){
@@ -46,5 +46,5 @@ class FlightsPerAirport{
       }        
     }
     return flightsNumber; 
-  } 
+  }
 }
