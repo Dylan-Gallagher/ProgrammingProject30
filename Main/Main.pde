@@ -61,6 +61,7 @@ PGraphics pg;
 ScrollableList ddOrderBy;
 CheckBox cbIncludeFields;
 Button btnGo;
+java.util.List<Toggle> cbStates;
 
 String sortBy = "FlightDate";
 StringDict dictFields = new StringDict();
@@ -142,6 +143,7 @@ public void setup()
     .addItem("Distance travelled", 7)
     ;
 
+
   btnGo = cp5.addButton("Go")
     .setValue(0)
     .setPosition(300, SCREENY-500)
@@ -213,23 +215,17 @@ public void draw()
   if (knowsPassword) {
     background (0);
   }
-  pg.beginDraw();
   // D.Gallagher - Added code for multiple screens, 11am 16/03/23
   // C.McCooey - Refactored screen switching code to use switch statement and Screen objects - 9am 29/03/23
   switch(currentScreen.pageNo) {
   case 0: //Query screen
     //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23]
     recordsDisplaying = false;
-    //currentScreen = scrCreateQuery;
     airport = "";
     ddOrderBy.show();
-    ddOrderBy.draw(pg);
-
     cbIncludeFields.show();
-    cbIncludeFields.draw(pg);
-
     btnGo.show();
-    btnGo.draw(pg);
+
 
     cols = new ArrayList<String>();
     cols.add("FlightDate");
@@ -247,6 +243,8 @@ public void draw()
     text(airport, SCREENX/2 + 55, 421);
     break;
   case 2:
+    recordsDisplaying = true;
+    records = new ArrayList<String>();
     airport = "";
     ddOrderBy.setVisible(false);
     cbIncludeFields.setVisible(false);
@@ -283,36 +281,27 @@ public void draw()
           currentRecord += Math.abs(dp.delay) + " minutes";
         }
       }
-      recordsDisplaying = true;
       records.add(currentRecord);
       currentRecord = "";
     }
 
-    if (records != null) {
-      getTextBox();
-      image(textBox, 50, 50 + slider.currentValue);      
-    }
-    
-    dps = new ArrayList<DataPoint>();
-    records = new ArrayList<String>();
+    getTextBox();
+    image(textBox, 50, 50 + slider.currentValue);
     break;
   }
-  pg.endDraw();
 }
 
 public void controlEvent(ControlEvent event) {
   //C. McCooey - Began to add code to generate query based on input - 2pm 29/03/23
   if (event.isFrom(btnGo)) {
-    java.util.List<Toggle> cbStates = cbIncludeFields.getItems();
+    cbStates = cbIncludeFields.getItems();
     for (int i = 0; i< cbStates.size(); i++) {
       if (cbIncludeFields.getState(i)) {
         cols.add(dictFields.get(str(i)));
       }
     }
-    //cols = new ArrayList<String>();
-    //query = new Query(false, cols, false, "", sortBy, true, 50);
-    //currentQuery = query.getSQLquery();
-    currentQuery = "SELECT * FROM flights ORDER BY " + sortBy + " ASC LIMIT 500";
+    dps = new ArrayList<DataPoint>();
+    currentQuery = "SELECT * FROM flights ORDER BY " + sortBy + " ASC LIMIT 1000";
     println(currentQuery);
     println("Loading data...");
     db = new SQLite(this, "SQLflights.db");
