@@ -22,7 +22,7 @@ final int EVENT_BUTTON4=4;
 final int EVENT_BUTTON5=5;
 final int EVENT_BUTTON6=6;
 final int EVENT_BUTTON7=7;
-final int EVENT_SLIDER=0;
+final int EVENT_SLIDER=8;
 final int EVENT_NULL = 0;
 
 Screen currentScreen;
@@ -32,7 +32,9 @@ Screen scrViewBarChart = new Screen(1);
 Screen scrViewFlightList = new Screen(2);
 //Screen dataScreen = new Screen(3);
 
+PGraphics textBox;
 Slider slider;
+ArrayList<String> records = new ArrayList<String>();
 
 String airport = "";
 
@@ -177,13 +179,13 @@ public void setup()
 
   DistancePerAirline airlineDistances = new DistancePerAirline(airlinesList);
   airlineBarChart = new BarChart(airlineDistances.airlineNames, airlineDistances.distanceTravelled, "Distance Travelled", "Airlines");
-  
-  
+
+
 
   scrCreateQuery.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
   scrCreateQuery.addWidget(new Widget(SCREENX/3, 1, SCREENX/3, 40, "                               BAR CHART", color(255), color(0), stdFont, EVENT_BUTTON3));
   scrCreateQuery.addWidget(new Widget(SCREENX/3 * 2 + 1, 1, SCREENX/3, 40, "                          VIEW DATA", color(255), color(0), stdFont, EVENT_BUTTON4));
-  
+
   scrViewFlightList.addWidget(slider = new Slider(SCREENX - 40, 60, 20, SCREENY -100, 1, 100, 50, color(255), color(0), stdFont, EVENT_SLIDER));
 
   scrViewFlightList.addWidget(new Widget(0, 1, SCREENX/3 - 1, 40, "                            CHOOSE DATA", color(255), color(0), stdFont, EVENT_BUTTON5));
@@ -218,7 +220,7 @@ public void draw()
   case 0: //Query screen
     //C. McCooey - Added code to show widgets on query selection screen - 1pm 29/03/23]
     recordsDisplaying = false;
-    currentScreen = scrCreateQuery;
+    //currentScreen = scrCreateQuery;
     airport = "";
     ddOrderBy.show();
     ddOrderBy.draw(pg);
@@ -241,8 +243,6 @@ public void draw()
     recordsDisplaying = false;
     ddOrderBy.hide();
     cbIncludeFields.hide();
-    //flightBarChart.draw();
-    //stateBarChart.draw();
     airlineBarChart.draw();
     text(airport, SCREENX/2 + 55, 421);
     break;
@@ -284,13 +284,17 @@ public void draw()
         }
       }
       recordsDisplaying = true;
-
-      text(currentRecord, 50, 100 + space);
-      space += 20;
+      records.add(currentRecord);
       currentRecord = "";
     }
-    noLoop();
+
+    if (records != null) {
+      getTextBox();
+      image(textBox, 50, 50 + slider.currentValue);      
+    }
+    
     dps = new ArrayList<DataPoint>();
+    records = new ArrayList<String>();
     break;
   }
   pg.endDraw();
@@ -305,7 +309,7 @@ public void controlEvent(ControlEvent event) {
         cols.add(dictFields.get(str(i)));
       }
     }
-    cols = new ArrayList<String>();
+    //cols = new ArrayList<String>();
     //query = new Query(false, cols, false, "", sortBy, true, 50);
     //currentQuery = query.getSQLquery();
     currentQuery = "SELECT * FROM flights ORDER BY " + sortBy + " ASC LIMIT 500";
@@ -379,6 +383,7 @@ public void mouseMoved() {
 }
 
 public void mouseDragged() {
+  slider.getEvent(mouseX, mouseY);
   if (slider.isDragging) {
     slider.sliderPosition = constrain(mouseY - 5, slider.y, slider.y + slider.height - 10);
     slider.currentValue = round(map(slider.sliderPosition, slider.x, slider.x + slider.width, slider.minValue, slider.maxValue));
@@ -422,4 +427,14 @@ public void keyPressed() {
       }
     }
   }
+}
+
+public void getTextBox() {
+  textBox = createGraphics(1000, 100000);
+  textBox.beginDraw();
+  for (String record : records) {
+    textBox.text(record, 0, space);
+    space += 20;
+  }
+  textBox.endDraw();
 }
