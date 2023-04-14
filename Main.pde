@@ -102,7 +102,9 @@ public void settings() {
 
 public void setup()
 {
+  // D. Gallagher - Got QGIS exported image of states with exact latitude and longitude cutoffs - 2pm 1/4/2023
   statesMap = loadImage("imageOfStates5.png");
+
   db = new SQLite(this, "SQLflights.db");
   if (db.connect()) {
     db.query("SELECT Origin FROM flights LIMIT 2000");
@@ -147,7 +149,7 @@ public void setup()
 
   //C.McCooey - Added code to process SQL queries and print result to console - 3pm 23/03/23
   //C.McCooey - Adjusted code to use currentQuery string and create DataPoints for each row processed - 5pm 28/03/23
-  //D. Gallagher - Added Python code to pre-process data - 3pm 23/03/23
+  //D. Gallagher - Added Python code to pre-process data (pre-processed-data.py) - 3pm 23/03/23
 
   //WIDGETS
 
@@ -229,6 +231,7 @@ public void setup()
   DistancePerAirline airlineDistances = new DistancePerAirline(airlinesList);
   airlineBarChart = new BarChart(airlineDistances.airlineNames, airlineDistances.distanceTravelled, "Distance Travelled", "Airlines");
 
+  // D. Gallagher - Improved efficiency of program by changing data structures to HashMaps - 7/4/2023
   airportsHashMap= new HashMap<String, float[]>();
   println("Loading airport data...");
   airportsTable = loadTable("airports_new.csv", "header");
