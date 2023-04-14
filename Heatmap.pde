@@ -1,3 +1,5 @@
+// D. Gallagher - Made Heatmap class (prototype) - 11am 31/03/2023
+
 class Heatmap {
   int x;
   int y;
@@ -28,8 +30,9 @@ class Heatmap {
   }
 
 
+  // D. Gallagher - Made 'data' HashMap and associated methods for populating it - 12pm 04/04/2023
+  // fill the 'data' HashMap, which stores the number of flights at each airport
   void populateData() {
-    // Loop through the DataPoints
     for (DataPoint dp : dps)
     {
       addOrUpdate(dp);
@@ -37,11 +40,15 @@ class Heatmap {
   }
 
 
+  // helper method for populateData() method
   void addOrUpdate(DataPoint dp) {
+    // if the HashMap already has that airport, increment the value by one, else make a new key-value pair and set that airport to 1  
     data.put(dp.originAirport, ((data.containsKey(dp.originAirport)) ? data.get(dp.originAirport) + 1 : 1));
   }
 
 
+  // D. Gallagher - Made method for finding max and min values - 6pm 08/04/2023
+  // find the range of values in the 'data' HashMap, used for the colour scale 
   void getMinAndMax(HashMap<String, Double> data)
   {
     for (String key : data.keySet())
@@ -60,65 +67,56 @@ class Heatmap {
   }
 
 
-  //void getIntensity() {
-  //  // loop through the data
-  //  for (String key : this.data.keySet())
-  //  {
-  //    double m = this.data.get(key);
-  //    double scaledNum = 360 - (((m - this.min) / (this.max - this.min)) * 360);
-  //    this.data.put(key, scaledNum);
-  //  }
-  //}
-
-
+  // draw map of the states
   void drawBackground() {
     image(map, x, y, width, height);
   }
 
 
+  // D. Gallagher - Made v1 of draw method for heatmap - 1am 10/04/2023
+  // D. Gallagher - Made v2 of draw method for heatmap, added color scaling - 6pm 12/04/2023
+  // D. Gallagher - Made final version of draw method for heatmap, added size scaling and removed borders from circles - 11pm 12/04/2023
+  // draw everything to screen
   void draw()
   {
     populateData();
     getMinAndMax(this.data);
-    //getIntensity();
 
-
-    // draw the heatmap
-
-    // draw a background
+    // draw a white background
     fill(255);
     rect(x, y, this.width, this.height);
+
+    // draw map of states
     drawBackground();
 
-    //// draw each of the circles
-    //for (String key : this.data.keySet())
-    //{
-    //  if (this.airports.containsKey(key))
-    //  {
-    //    fill(this.data.get(key).intValue());
-    //    ellipse(this.airports.get(key)[0], this.airports.get(key)[0], this.circleSize, this.circleSize);
-    //  }
-    //}
+    // change colormode to Hue, Saturation and Brightness (HSB), makes it much easier to scale the colors
     colorMode(HSB, 360, 100, 100);
+
+    // remove borders from circles on map
     noStroke();
+
+    // draw each of the airports in the correct size and color
     for (String key : this.data.keySet()) {
       if (this.airports.containsKey(key)) {
         float[] location = this.airports.get(key);
         float latitudeVal = map(location[0], 10, 71.18, y + this.height, y);
         float longitudeVal = map(location[1], -126, -66, x, x + this.width);
-        println("longitude:" + longitudeVal);
-        println("latitude:" + latitudeVal);
 
-        //float size = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 1.0, 50.0);
+	// represent the color on the scale from popular (red) to unpopular (blue)
         float hue = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 240, 0);
 
-        // Set the color using the calculated hue, and full saturation and brightness
+        // set the color using the calculated hue, and full saturation and brightness
         fill(hue, 100, 100);
         
+	// scale the size of the circle based on popularity (more popular -> bigger)
         float adjustedCircleSize = map(this.data.get(key).floatValue(), (float) this.min, (float) this.max, 10, 25);
+
+	// draw the circle
         ellipse(longitudeVal, latitudeVal, adjustedCircleSize, adjustedCircleSize);
       }
     }
+
+    // change colormode back to RGB, so it doesn't mess up the rest of the program
     colorMode(RGB, 255, 255, 255);
   }
 }
